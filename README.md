@@ -7,7 +7,7 @@
 - branch naming convention: /nethz/feature_name
 
 ## Repository Structure
-``
+```nohighlight
 ├── README.md          <- The top-level README for developers using this project.
 ├── data
 │   ├── external       <- Data from third party sources.
@@ -41,4 +41,4 @@
     │
     └── visualization  <- Scripts to create exploratory and results oriented visualizations
         └── visualize.py
-``
+```
