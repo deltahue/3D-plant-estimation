@@ -4,7 +4,7 @@
 ## Git Conventions:
 - Stick to the git workflow as much as possible: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 - In order to merge a branch create a pull request for the others to review
-- branch naming convention: /nethz/feature_name
+- branch naming convention: nethz/feature_name
 
 ## Repository Structure
 ```nohighlight
