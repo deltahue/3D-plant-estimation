@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # colmap
-from read_write_model import read_images_text
+from read_write_model import read_images_text, read_cameras_text
 from read_write_dense import read_array
 
 #%%
@@ -18,38 +18,6 @@ def visualize_cloud(pcd):
                                   lookat=[2.6172, 2.0475, 1.532],
                                   up=[-0.0694, -0.9768, 0.2024])    
     
-# Read trajectory from .log file 
-# (functions from http://www.open3d.org/docs/release/tutorial/pipelines/rgbd_integration.html#TSDF-volume-integration) 
-# TODO: Change so it fits my method
-class CameraPose:
-
-    def __init__(self, meta, mat):
-        self.metadata = meta
-        self.pose = mat
-
-    def __str__(self):
-        return 'Metadata : ' + ' '.join(map(str, self.metadata)) + '\n' + \
-            "Pose : " + "\n" + np.array_str(self.pose)
-
-
-def read_trajectory(filename):
-    traj = []
-    with open(filename, 'r') as f:
-        metastr = f.readline()
-        while metastr:
-            metadata = list(map(int, metastr.split()))
-            mat = np.zeros(shape=(4, 4))
-            for i in range(4):
-                matstr = f.readline()
-                mat[i, :] = np.fromstring(matstr, dtype=float, sep=' \t')
-            traj.append(CameraPose(metadata, mat))
-            metastr = f.readline()
-    return traj
-
-#%%
-
-camera_poses = read_trajectory("../../3D-data/odometry.log")
-
 #%%
 
 # This function is based on this tutorial:
@@ -121,12 +89,30 @@ for i in range(len(quaternion)):
     transformation_matrices.append(transformation)
 
 transformation_matrices = np.array(transformation_matrices)
-#%% Visualize and save depthmaps from COLMAP, using their scripts/python/read_dense.py
+
+#%%
+cameras = read_cameras_text("../../3D-data/cameras.txt")
+
+widths, heights, focals, cxs,cys = [],[],[],[],[]
+for i in range(len(cameras)):
+    widths.append(cameras[i+1][2])
+    heights.append(cameras[i+1][3])
+    focals.append(cameras[i+1][4][0])
+    cxs.append(cameras[i+1][4][1])
+    cys.append(cameras[i+1][4][2])
+
+widths = np.array(widths)
+heights = np.array(heights)
+focals = np.array(focals)
+cxs = np.array(cxs)
+cys = np.array(cys)
+
+#%% Visualize (and save) depthmaps from COLMAP, using their scripts/python/read_dense.py
 
 depth_maps = []
 save = False
 for i in range(len(transformation_matrices)):
-    depth_map = read_array('../../3D-data/depth_maps/frame-'+ f'{i+1:05}' + '.jpg.photometric.bin')
+    depth_map = read_array('../../3D-data/depth_maps/frame-'+ f'{i+1:05}' + '.jpg.geometric.bin')
     depth_maps.append(depth_map)
     if save == True:
         plt.imshow(depth_map)
@@ -138,7 +124,6 @@ depth_maps = np.array(depth_maps)
 #%% Follow this tutorial for TSDF volume integration:
 # http://www.open3d.org/docs/release/tutorial/pipelines/rgbd_integration.html#TSDF-volume-integration
 
-#TODO: Find out how to access the depthmaps
 volume = o3d.pipelines.integration.ScalableTSDFVolume(
     voxel_length=4.0 / 512.0,
     sdf_trunc=0.04,
@@ -150,10 +135,14 @@ for i in range(len(transformation_matrices)):
     depth = o3d.geometry.Image((depth_maps[i]).astype(np.uint8))
     rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(
         color, depth, depth_trunc=4.0, convert_rgb_to_intensity=False)
+
+    intrinsics = o3d.cpu.pybind.camera.PinholeCameraIntrinsic()
+    #intrinsics.set_intrinsics(widths[i], heights[i],focals[i],focals[i],cxs[i],cys[i])
+    intrinsics.set_intrinsics(len(depth_maps[i][0]), len(depth_maps[i]),focals[i],focals[i],cxs[i],cys[i])
+    #intrinsics = o3d.camera.PinholeCameraIntrinsic().set_intrinsics(widths[i], heights[i],focals[i],focals[i],cxs[i],cys[i])
     volume.integrate(
         rgbd,
-        o3d.camera.PinholeCameraIntrinsic(
-            o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault),
+        intrinsics,
         np.linalg.inv(transformation_matrices[i]))
 
 
@@ -161,7 +150,13 @@ for i in range(len(transformation_matrices)):
 print("Extract a triangle mesh from the volume and visualize it.")
 mesh = volume.extract_triangle_mesh()
 mesh.compute_vertex_normals()
-visualize_cloud(mesh)
+#visualize_cloud(mesh)
+
+o3d.visualization.draw_geometries([mesh],
+                                  front=[0.5297, -0.1873, -0.8272],
+                                  lookat=[2.0712, 2.0312, 1.7251],
+                                  up=[-0.0558, -0.9809, 0.1864],
+                                  zoom=0.47)
 
 
 
