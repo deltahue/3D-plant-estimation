@@ -1,10 +1,16 @@
 
+# import packages
 import open3d as o3d
 import numpy as np
+import matplotlib.pyplot as plt
+
+# colmap
 from read_write_model import read_images_text
+from read_write_dense import read_array
 
 #%%
 
+# Function to visualize point cloud (also works for mesh)
 def visualize_cloud(pcd):
     o3d.visualization.draw_geometries([pcd],
                                   zoom=0.1500,
@@ -14,6 +20,7 @@ def visualize_cloud(pcd):
     
 # Read trajectory from .log file 
 # (functions from http://www.open3d.org/docs/release/tutorial/pipelines/rgbd_integration.html#TSDF-volume-integration) 
+# TODO: Change so it fits my method
 class CameraPose:
 
     def __init__(self, meta, mat):
@@ -39,14 +46,9 @@ def read_trajectory(filename):
             metastr = f.readline()
     return traj
 
-#%% Visualize the point cloud
+#%%
 
-print("Load a ply point cloud, print it, and render it")
-pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
-#pcd = o3d.io.read_point_cloud('meshed-poisson.ply')
-#print(pcd)
-#print(np.asarray(pcd.points))
-visualize_cloud(pcd)
+camera_poses = read_trajectory("../../3D-data/odometry.log")
 
 #%%
 
@@ -92,11 +94,15 @@ def quaternion_rotation_matrix(Q):
 						   
     return rot_matrix
 
-#%%
+#%% Visualize the point cloud
+
+print("Load a ply point cloud, print it, and render it")
+pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
+visualize_cloud(pcd)
+
+#%% Read information about camera poses, convert information into translation matrices
 
 images = read_images_text("../../3D-data/images.txt")
-
-#%%
 
 quaternion = []
 translation = []
@@ -107,71 +113,55 @@ for i in range(len(images)):
 quaternion = np.array(quaternion)
 translation = np.array(translation)
 
-print(quaternion.shape)
-print(translation.shape)
-
-#%%
-
-transformation_matrix = []
+transformation_matrices = []
 for i in range(len(quaternion)):
     rotation_matrix = quaternion_rotation_matrix(quaternion[i])
     transformation = np.c_[rotation_matrix, translation[i]]
     transformation = np.vstack((transformation, np.array([0,0,0,1])))
-    transformation_matrix.append(transformation)
+    transformation_matrices.append(transformation)
 
-#%% Try to visualize depthmaps from COLMAP, using their scripts/python/read_dense.py
+transformation_matrices = np.array(transformation_matrices)
+#%% Visualize and save depthmaps from COLMAP, using their scripts/python/read_dense.py
 
-#from read_write_dense import read_array
+depth_maps = []
+save = False
+for i in range(len(transformation_matrices)):
+    depth_map = read_array('../../3D-data/depth_maps/frame-'+ f'{i+1:05}' + '.jpg.photometric.bin')
+    depth_maps.append(depth_map)
+    if save == True:
+        plt.imshow(depth_map)
+        plt.xticks([]), plt.yticks([])  # to hide tick values on X and Y axis
+        plt.savefig('../../3D-data/depth_images/frame-'+ f'{i+1:05}' + '.png')
+        
+depth_maps = np.array(depth_maps)
 
-#read_array('../../3D-data/depth_maps/')
+#%% Follow this tutorial for TSDF volume integration:
+# http://www.open3d.org/docs/release/tutorial/pipelines/rgbd_integration.html#TSDF-volume-integration
 
-#%% Follow this tutorial
-#http://www.open3d.org/docs/release/tutorial/pipelines/rgbd_integration.html#TSDF-volume-integration
-
-# TODO: Find out if we have this or how this is generated
-camera_poses = read_trajectory("../../3D-data/odometry.log") # Use example from tutorial
-
-#%% TSDF volume integration
 #TODO: Find out how to access the depthmaps
 volume = o3d.pipelines.integration.ScalableTSDFVolume(
     voxel_length=4.0 / 512.0,
     sdf_trunc=0.04,
     color_type=o3d.pipelines.integration.TSDFVolumeColorType.RGB8)
 
-for i in range(len(camera_poses)):
+for i in range(len(transformation_matrices)):
     print("Integrate {:d}-th image into the volume.".format(i))
-    color = o3d.io.read_image("../../3D-data/images/{:05d}.jpg".format(i))
-    depth = o3d.io.read_image("../../3D-data/depth_maps/{:05d}.png".format(i))
+    color = o3d.io.read_image('../../3D-data/images/frame-' + f'{i+1:05}' + '.jpg')
+    depth = o3d.geometry.Image((depth_maps[i]).astype(np.uint8))
     rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(
         color, depth, depth_trunc=4.0, convert_rgb_to_intensity=False)
     volume.integrate(
         rgbd,
         o3d.camera.PinholeCameraIntrinsic(
             o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault),
-        np.linalg.inv(camera_poses[i].pose))
+        np.linalg.inv(transformation_matrices[i]))
 
 
-#%% Extract a mesh
+#%% Extract a mesh and visualize it
 print("Extract a triangle mesh from the volume and visualize it.")
 mesh = volume.extract_triangle_mesh()
 mesh.compute_vertex_normals()
-o3d.visualization.draw_geometries([mesh],
-                                  front=[0.5297, -0.1873, -0.8272],
-                                  lookat=[2.0712, 2.0312, 1.7251],
-                                  up=[-0.0558, -0.9809, 0.1864],
-                                  zoom=0.47)
-
-
-
-
-
-#%%
-def main():
-    print()
-
-if __name__ == '__main__':
-    main()
-
+visualize_cloud(mesh)
 
 
 
