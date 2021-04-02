@@ -5,7 +5,7 @@ import numpy as np
 # Function to visualize point cloud (also works for mesh)
 def visualize_cloud(pcd):
     o3d.visualization.draw_geometries([pcd],
-                                  zoom=0.1500,
+                                  zoom=0.0001,#0.1500,
                                   front= [-0.4257, 0.2125, -0.7000],
                                   lookat=[2.6172, 2.0475, 1.532],
                                   up=[-0.0694, -0.9768, 0.2024])    

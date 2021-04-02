@@ -21,35 +21,6 @@ if visualize_pcd == True:
     pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
     visualize_cloud(pcd)
 
-#%%
-
-
-class CameraPose:
-
-    def __init__(self, meta, mat):
-        self.metadata = meta
-        self.pose = mat
-
-    def __str__(self):
-        return 'Metadata : ' + ' '.join(map(str, self.metadata)) + '\n' + \
-            "Pose : " + "\n" + np.array_str(self.pose)
-
-
-def read_trajectory(filename):
-    traj = []
-    with open(filename, 'r') as f:
-        metastr = f.readline()
-        while metastr:
-            metadata = list(map(int, metastr.split()))
-            mat = np.zeros(shape=(4, 4))
-            for i in range(4):
-                matstr = f.readline()
-                mat[i, :] = np.fromstring(matstr, dtype=float, sep=' \t')
-            traj.append(CameraPose(metadata, mat))
-            metastr = f.readline()
-    return traj
-
-camera_poses = read_trajectory("odometry.log")
 
 #%%
 
@@ -105,9 +76,6 @@ cys = np.array(cys)
 depth_maps = []
 for i in range(len(transformation_matrices)):
     depth_map = read_array('../../3D-data/depth_maps/frame-'+ f'{i+1:05}' + '.jpg.geometric.bin').astype(np.uint16)
-    print(np.max(depth_map))
-    print()
-    #depth_map = cv.convertScaleAbs(depth_map, alpha=(65535.0/255.0))
     depth_maps.append(depth_map)
     if save_depth_maps == True:
         cv.imwrite('../../3D-data/depth_images/frame-'+ f'{i+1:05}' + '.png', depth_map)
@@ -119,12 +87,12 @@ depth_maps = np.array(depth_maps)
 # http://www.open3d.org/docs/release/tutorial/pipelines/rgbd_integration.html#TSDF-volume-integration
 
 volume = o3d.pipelines.integration.ScalableTSDFVolume(
-    voxel_length = 0.01, # 4.0 / 512.0, 
-    sdf_trunc = 0.05, #0.04, 
+    voxel_length = 0.2 / 512.0, 
+    sdf_trunc = 0.002, 
     color_type=o3d.pipelines.integration.TSDFVolumeColorType.RGB8)
 
 for i in range(len(depth_maps)):
-    if i % 10 == 0 or i == len(transformation_matrices) -1:
+    if i % 10 == 0 or i == len(depth_maps) -1:
         print("Integrate image no {:d} into the volume.".format(i))
     color = o3d.io.read_image('../../3D-data/images/frame-' + f'{i+1:05}' + '.jpg')
     depth = o3d.io.read_image('../../3D-data/depth_images/frame-' + f'{i+1:05}' + '.png')
@@ -150,7 +118,12 @@ mesh.compute_vertex_normals()
 print(mesh)
 #%%
 if visualize_mesh == True:
-    visualize_cloud(mesh)
+    #visualize_cloud(mesh)
+    o3d.visualization.draw_geometries([mesh],
+                                  front=[0.5297, -0.1873, -0.8272],
+                                  lookat=[2.0712, 2.0312, 1.7251],
+                                  up=[-0.0558, -0.9809, 0.1864],
+                                  zoom=0.47)
 
 
 
