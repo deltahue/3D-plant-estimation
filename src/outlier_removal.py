@@ -82,6 +82,7 @@ print(time.asctime())
 #%% 
 visualize_mesh(mesh_poi_rad14_scale2)
 o3d.io.write_triangle_mesh('../../3D-data/mesh_from_cropped_pcd.ply', mesh_poi_rad14_scale2)
+<<<<<<< HEAD
 
 #%%
 
@@ -103,6 +104,8 @@ print(time.asctime())
 
 visualize_mesh(mesh_bpa)
 #o3d.io.write_triangle_mesh('../../3D-data/bpa_mesh_from_unfiltered_cropped_pcd.ply', mesh_bpa)
+=======
+>>>>>>> 526c02234c3b8bf2942269dc5dd749f4bc31222f
 
 #%% Downsample the point cloud
 # (from here on, we are following http://www.open3d.org/docs/release/tutorial/geometry/pointcloud_outlier_removal.html)
