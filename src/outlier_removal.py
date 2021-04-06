@@ -21,77 +21,6 @@ print(mesh)
 visualize_cloud(mesh)
 
 #%%
-# Try to crop point cloud
-# Some inspiration from
-# https://stackoverflow.com/questions/61269980/open3d-crop-pointcloud-with-polygon-volume
-'''
-corners = np.array([[ -9, -9, 25 ],
-		[ -9, 10, 25 ],
-		[ 19, -9, 25 ],
-		[ 19, 10, 25],
-		[ -9, -9, 1 ],
-		[ -9, 10, 1 ],
-		[ 19, -9, 1 ],
-		[ 19, 10, 1 ]])
-'''
-
-corners = np.array([
-        [ -5, -5, 12 ],
-		[ -5, 10, 12 ],
-		[ 10, -5, 12 ],
-		[ 10, 10, 12],
-		[ -5, -5, 1 ],
-		[ -5, 10, 1 ],
-		[ 10, -5, 1 ],
-		[ 10, 10, 1 ]])
-
-		
-# Convert the corners array to have type float64
-bounding_polygon = corners.astype("float64")
-
-# Create a SelectionPolygonVolume
-vol = o3d.visualization.SelectionPolygonVolume()
-
-# Specify what axis to orient the polygon to.
-# Orient the polygon to the "Y" axis. Max value the maximum Y of
-# the polygon vertices and the min value the minimum Y of the polygon vertices.
-vol.orthogonal_axis = "Y"
-vol.axis_max = np.max(bounding_polygon[:, 1])
-vol.axis_min = np.min(bounding_polygon[:, 1])
-
-# Set all the Y values to 0 (they aren't needed since we specified what they
-# should be using just vol.axis_max and vol.axis_min).
-bounding_polygon[:, 1] = 0
-
-# Convert the np.array to a Vector3dVector
-vol.bounding_polygon = o3d.utility.Vector3dVector(bounding_polygon)
-
-# Crop the point cloud using the Vector3dVector
-cropped_pcd = vol.crop_point_cloud(pcd)
-
-# Get a nice looking bounding box to display around the newly cropped point cloud
-# (This part is optional and just for display purposes)
-bounding_box = cropped_pcd.get_axis_aligned_bounding_box()
-bounding_box.color = (1, 0, 0)
-
-# Draw the newly cropped PCD and bounding box
-#visualize_cloud(cropped_pcd)
-
-o3d.visualization.draw_geometries([cropped_pcd,bounding_box],
-                                  zoom=1,#0.3412,
-                                  front= [-0.4257, 0.2125, -0.7000], #[0.4257, -0.2125, -0.8795],
-                                  lookat=[2.6172, 2.0475, 1.532],
-                                  up=[-0.0694, -0.9768, 0.2024])  
-
-
-'''
-vol = o3d.visualization.read_selection_polygon_volume("cropped.json")
-plant = vol.crop_point_cloud(pcd)
-print(plant)
-visualize_cloud(plant)
-'''
-
-#%%
 # Try to crop mesh
 # https://github.com/intel-isl/Open3D/issues/1410
 
@@ -104,33 +33,25 @@ print(np.max(np.asarray(mesh1.vertices)[:,0]))
 print(np.max(np.asarray(mesh1.vertices)[:,1]))
 print(np.max(np.asarray(mesh1.vertices)[:,2]))
 '''
+# TODO: Rotate the bouinding box
 print(mesh1)
-bbox = o3d.geometry.AxisAlignedBoundingBox(min_bound=(-5, -5, 1), max_bound=(10, 10, 12))
-mesh1.crop(bbox)
-print(mesh1)
-o3d.visualization.draw_geometries([mesh1,bbox])
+#bbox = o3d.geometry.AxisAlignedBoundingBox(min_bound=(-5, -5, 1), max_bound=(10, 10, 12))
+#bbox = o3d.geometry.AxisAlignedBoundingBox(min_bound=(0, -4.5, 0), max_bound=(5, 4, 9))
 
-'''
-print("Make a partial mesh")
-mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
+# Need to rotate the bounding box 45 degrees to have the plant approximately in center
+bbox = o3d.geometry.OrientedBoundingBox(center = np.array([2.5,-0.25,4.5]),
+                                        R = np.array([[1,0,0],[0,1/np.sqrt(2),-1/np.sqrt(2)],[0,1/np.sqrt(2),1/np.sqrt(2)]]),
+                                        extent = np.array([5,7.5,5])
+                                        )
 
-#meshvertices = np.asarray(mesh.vertices)
-#meshvertices_cropped = np.where(np.asarray(mesh.vertices)>15, np.asarray(mesh.vertices), -1)
-meshtriang = np.asarray(mesh.triangles)
-meshtriang_cropped = np.where(np.asarray(mesh.triangles)<2e6, np.asarray(mesh.triangles), -1)
-to_delete = []
-for i in range(len(meshtriang_cropped)):#vertices_cropped)):
-    if meshtriang_cropped[i][0] == -1 or meshtriang_cropped[i][2] == -1 or meshtriang_cropped[i][2] == -1:
-        to_delete.append(i)
-meshtriang_cropped = np.delete(meshtriang_cropped, to_delete,0)
-#meshtriang = np.delete(meshtriang, to_delete,0)
+cropped_mesh = mesh1.crop(bbox)
+print(cropped_mesh)
+o3d.visualization.draw_geometries([cropped_mesh,bbox])
+visualize_cloud(cropped_mesh)
 
-print("make the mesh")
-#mesh.vertices = o3d.utility.Vector3iVector(meshvertices_cropped)
-mesh.triangles = o3d.utility.Vector3iVector(meshtriang_cropped)
-
-o3d.visualization.draw_geometries([mesh])
-'''
+#%%
+# Export results
+o3d.io.write_triangle_mesh('../../3D-data/cropped_mesh.ply', cropped_mesh)
 #%%
 # Suggested in documentation
 mesh1 = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
