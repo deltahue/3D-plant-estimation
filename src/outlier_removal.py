@@ -25,18 +25,7 @@ visualize_cloud(mesh)
 # https://github.com/intel-isl/Open3D/issues/1410
 
 mesh1 = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
-'''
-print(np.min(np.asarray(mesh1.vertices)[:,0]))
-print(np.min(np.asarray(mesh1.vertices)[:,1]))
-print(np.min(np.asarray(mesh1.vertices)[:,2]))
-print(np.max(np.asarray(mesh1.vertices)[:,0]))
-print(np.max(np.asarray(mesh1.vertices)[:,1]))
-print(np.max(np.asarray(mesh1.vertices)[:,2]))
-'''
-# TODO: Rotate the bouinding box
 print(mesh1)
-#bbox = o3d.geometry.AxisAlignedBoundingBox(min_bound=(-5, -5, 1), max_bound=(10, 10, 12))
-#bbox = o3d.geometry.AxisAlignedBoundingBox(min_bound=(0, -4.5, 0), max_bound=(5, 4, 9))
 
 # Need to rotate the bounding box 45 degrees to have the plant approximately in center
 bbox = o3d.geometry.OrientedBoundingBox(center = np.array([2.5,-0.25,4.5]),
@@ -52,28 +41,73 @@ visualize_cloud(cropped_mesh)
 #%%
 # Export results
 o3d.io.write_triangle_mesh('../../3D-data/cropped_mesh.ply', cropped_mesh)
+
+#%% Also crop the point cloud and export results
+
+cropped_pcd = pcd.crop(bbox)
+visualize_cloud(cropped_pcd)
+o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw.ply', cropped_pcd)
+
+#%% Downsample and remove outliers from cropped point cloud
+
+
+print("Downsample the point cloud with a voxel of 0.02")
+voxel_down_cropped_pcd = cropped_pcd.voxel_down_sample(voxel_size=0.02)
+#visualize_cloud(voxel_down_cropped_pcd)
+
+'''
+print("Statistical outlier removal")
+stat_cl, ind = voxel_down_cropped_pcd.remove_statistical_outlier(nb_neighbors=30, std_ratio=1.5)
+print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(stat_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
+display_inlier_outlier(voxel_down_cropped_pcd, ind)
+visualize_cloud(stat_cl)
+'''
+
+print("Radius oulier removal")
+rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1)
+print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
+display_inlier_outlier(voxel_down_cropped_pcd, ind)
+visualize_cloud(rad_cl)
+
 #%%
-# Suggested in documentation
-mesh1 = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
-meshtriang = np.asarray(mesh1.triangles)[:len(mesh1.triangles) // 2 :]
-meshtriangnorm = np.asarray(mesh1.triangle_normals)[:len(mesh1.triangles) // 2 :]
 
-print("We make a partial mesh of only the first half triangles.")
-mesh1.triangles = o3d.utility.Vector3iVector(
-    np.asarray(mesh1.triangles)[:len(mesh1.triangles) // 2+ len(mesh1.triangles) // 4 :])
-mesh1.triangle_normals = o3d.utility.Vector3dVector(
-    np.asarray(mesh1.triangle_normals)[:len(mesh1.triangle_normals) // 2+ len(mesh1.triangles) // 4, :])
-print(mesh1.triangles)
-o3d.visualization.draw_geometries([mesh1])
+o3d.io.write_point_cloud('../../3D-data/cropped_pcd_downsampled_and_filtered_rad20.ply', rad_cl)
 
+#%% Finally, try mesh generation on the filtered pointcloud
+
+print(time.asctime()) 
+mesh_poi_rad14_scale2 = Poisson(rad_cl, depth = 14, scale=2.0) 
+print(time.asctime())
+
+#%% 
+visualize_mesh(mesh_poi_rad14_scale2)
+o3d.io.write_triangle_mesh('../../3D-data/mesh_from_cropped_pcd.ply', mesh_poi_rad14_scale2)
+
+#%%
+
+print(time.asctime()) 
+mesh_bpa_cropped = BPA(rad_cl, 4.0)
+print(time.asctime())
+
+#%% 
+visualize_mesh(mesh_bpa_cropped)
+o3d.io.write_triangle_mesh('../../3D-data/bpa_mesh_from_cropped_pcd.ply', mesh_bpa_cropped)
+
+#%%
+
+print(time.asctime()) 
+mesh_bpa = BPA(pcd, 4.0)
+print(time.asctime())
+
+#%%
+
+visualize_mesh(mesh_bpa)
+#o3d.io.write_triangle_mesh('../../3D-data/bpa_mesh_from_unfiltered_cropped_pcd.ply', mesh_bpa)
 
 #%% Downsample the point cloud
 # (from here on, we are following http://www.open3d.org/docs/release/tutorial/geometry/pointcloud_outlier_removal.html)
 
-print("Downsample the point cloud with a voxel of 0.02")
 voxel_down_pcd = pcd.voxel_down_sample(voxel_size=0.02)
-visualize_cloud(voxel_down_pcd)
-
 
 #%% statistical outlier removal
 
@@ -91,7 +125,7 @@ display_inlier_outlier(voxel_down_pcd, ind)
 visualize_cloud(rad_cl)
 
 #%% # Set up experiments: (let several experiments run and visualize later)
-
+'''
 print(time.asctime())
 print("Statistical outlier removal")
 stat_cl_30_1p5, ind = voxel_down_pcd.remove_statistical_outlier(nb_neighbors=30, std_ratio=1.5)
@@ -144,7 +178,7 @@ mesh_poi_rad_cl_16_0p1_scale2p0 = Poisson(rad_cl_16_0p1, scale = 2.0)
 
 
 print(time.asctime()) 
-
+'''
 #%% Visualize results
 
 print(time.asctime()) 
@@ -161,65 +195,6 @@ visualize_mesh(mesh_poi_dep12)
 #%% Export results
 
 #o3d.io.write_triangle_mesh('mesh_poi_stat_cl_30_1p5_dep12_scale2.ply', mesh_poi_stat_cl_30_1p5_dep12_scale2)
-
-#%% Old visualizations
-
-'''
-my_mesh = Poisson(pcd) # Basic, no outlier removal
-visualize_mesh(my_mesh)
-
-visualize_mesh(mesh_poi_stat_cl_30_1p5)
-visualize_mesh(mesh_poi_rad_cl_16_0p1)
-
-visualize_mesh(mesh_BPA_stat_cl_30_1p5_rad1p5)
-visualize_mesh(mesh_poi_stat_cl_30_1p5_default)
-visualize_mesh(mesh_BPA_stat_cl_30_1p5_rad2p0)
-visualize_mesh(mesh_BPA_stat_cl_30_1p5_rad2p5)
-visualize_mesh(mesh_BPA_stat_cl_30_1p5_rad3p0)
-visualize_mesh(mesh_BPA_stat_cl_30_1p5_rad4p0)
-visualize_mesh(mesh_BPA_stat_cl_30_1p5_rad5p0)
-
-visualize_mesh(mesh_poi_stat_cl_30_1p5_dep5)
-visualize_mesh(mesh_poi_stat_cl_30_1p5_dep7)
-
-visualize_mesh(mesh_poi_stat_cl_30_1p5_scale1p5)
-visualize_mesh(mesh_poi_stat_cl_30_1p5_scale2p0)
-
-visualize_mesh(mesh_BPA_rad_cl_16_0p1_rad1p5)
-visualize_mesh(mesh_poi_rad_cl_16_0p1_default)
-
-visualize_mesh(mesh_BPA_rad_cl_16_0p1_rad2p0)
-visualize_mesh(mesh_BPA_rad_cl_16_0p1_rad2p5)
-visualize_mesh(mesh_BPA_rad_cl_16_0p1_rad3p0)
-visualize_mesh(mesh_BPA_rad_cl_16_0p1_rad4p0)
-visualize_mesh(mesh_BPA_rad_cl_16_0p1_rad5p0)
-
-visualize_mesh(mesh_poi_rad_cl_16_0p1_dep5)
-visualize_mesh(mesh_poi_rad_cl_16_0p1_dep7)
-visualize_mesh(mesh_poi_rad_cl_16_0p1_scale1p5)
-visualize_mesh(mesh_poi_rad_cl_16_0p1_scale2p0)
-visualize_mesh(mesh_poi_stat_cl_30_1p5_dep9)
-visualize_mesh(mesh_poi_stat_cl_30_1p5_dep10)
-'''
-
-
-
-'''
-print(".")
-stat_cl_25_1p5, ind = voxel_down_pcd.remove_statistical_outlier(nb_neighbors=25, std_ratio=1.5)
-mesh_BPA_stat_cl_25_1p5_rad1p5 =  BPA(stat_cl_25_1p5, 1.5)
-mesh_poi_stat_cl_30_1p5_default = Poisson(stat_cl_30_1p5)
-print(".")
-stat_cl_30_2p0, ind = voxel_down_pcd.remove_statistical_outlier(nb_neighbors=30, std_ratio=2.0)
-#mesh_BPA_stat_cl_30_1p5_rad1p5 =  BPA(stat_cl_30_1p5, 1.5)
-#mesh_poi_stat_cl_30_1p5_default = Poisson(stat_cl_30_1p5)
-print(".")
-stat_cl_25_2p0, ind = voxel_down_pcd.remove_statistical_outlier(nb_neighbors=25, std_ratio=2.0)
-#mesh_BPA_stat_cl_30_1p5_rad1p5 =  BPA(stat_cl_30_1p5, 1.5)
-#mesh_poi_stat_cl_30_1p5_default = Poisson(stat_cl_30_1p5)
-print(".")
-'''
-
 
 
 
