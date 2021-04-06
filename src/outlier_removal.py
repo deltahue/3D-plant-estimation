@@ -13,13 +13,15 @@ from utils import visualize_cloud, visualize_mesh, display_inlier_outlier, BPA, 
 print("Load a ply point cloud, print it, and render it")
 pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
 mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
-#mesh = o3d.io.read_triangle_mesh('mesh_poi_stat_cl_30_1p5_dep12.ply')
+#mesh = o3d.io.read_triangle_mesh('../../3D-data/mesh_poi_stat_cl_30_1p5_dep12.ply')
 #print(pcd)
 #print(np.asarray(pcd.points))
 print(mesh)
-#visualize_cloud(mesh)
+#visualize_cloud(pcd)
+visualize_cloud(mesh)
 
 #%%
+# Try to crop point cloud
 # Some inspiration from
 # https://stackoverflow.com/questions/61269980/open3d-crop-pointcloud-with-polygon-volume
 '''
@@ -34,10 +36,10 @@ corners = np.array([[ -9, -9, 25 ],
 '''
 
 corners = np.array([
-        [ -5, -5, 20 ],
-		[ -5, 10, 20 ],
-		[ 10, -5, 20 ],
-		[ 10, 10, 20],
+        [ -5, -5, 12 ],
+		[ -5, 10, 12 ],
+		[ 10, -5, 12 ],
+		[ 10, 10, 12],
 		[ -5, -5, 1 ],
 		[ -5, 10, 1 ],
 		[ 10, -5, 1 ],
@@ -75,7 +77,7 @@ bounding_box.color = (1, 0, 0)
 # Draw the newly cropped PCD and bounding box
 #visualize_cloud(cropped_pcd)
 
-o3d.visualization.draw_geometries([cropped_pcd, bounding_box],
+o3d.visualization.draw_geometries([cropped_pcd,bounding_box],
                                   zoom=1,#0.3412,
                                   front= [-0.4257, 0.2125, -0.7000], #[0.4257, -0.2125, -0.8795],
                                   lookat=[2.6172, 2.0475, 1.532],
@@ -90,39 +92,59 @@ visualize_cloud(plant)
 '''
 
 #%%
+# Try to crop mesh
+# https://github.com/intel-isl/Open3D/issues/1410
 
+mesh1 = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
+'''
+print(np.min(np.asarray(mesh1.vertices)[:,0]))
+print(np.min(np.asarray(mesh1.vertices)[:,1]))
+print(np.min(np.asarray(mesh1.vertices)[:,2]))
+print(np.max(np.asarray(mesh1.vertices)[:,0]))
+print(np.max(np.asarray(mesh1.vertices)[:,1]))
+print(np.max(np.asarray(mesh1.vertices)[:,2]))
+'''
+print(mesh1)
+bbox = o3d.geometry.AxisAlignedBoundingBox(min_bound=(-5, -5, 1), max_bound=(10, 10, 12))
+mesh1.crop(bbox)
+print(mesh1)
+o3d.visualization.draw_geometries([mesh1,bbox])
+
+'''
 print("Make a partial mesh")
+mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 
-
-meshvertices = np.asarray(mesh.vertices)
-meshvertices_cropped = np.where(np.asarray(mesh.vertices)>15, np.asarray(mesh.vertices), -1)
+#meshvertices = np.asarray(mesh.vertices)
+#meshvertices_cropped = np.where(np.asarray(mesh.vertices)>15, np.asarray(mesh.vertices), -1)
 meshtriang = np.asarray(mesh.triangles)
+meshtriang_cropped = np.where(np.asarray(mesh.triangles)<2e6, np.asarray(mesh.triangles), -1)
 to_delete = []
-for i in range(len(meshvertices_cropped)):
-    if meshvertices_cropped[i][0] == -1 or meshvertices_cropped[i][2] == -1 or meshvertices_cropped[i][2] == -1:
+for i in range(len(meshtriang_cropped)):#vertices_cropped)):
+    if meshtriang_cropped[i][0] == -1 or meshtriang_cropped[i][2] == -1 or meshtriang_cropped[i][2] == -1:
         to_delete.append(i)
-meshvertices_cropped = np.delete(meshvertices_cropped, to_delete,0)
+meshtriang_cropped = np.delete(meshtriang_cropped, to_delete,0)
 #meshtriang = np.delete(meshtriang, to_delete,0)
 
 print("make the mesh")
-mesh.vertices = o3d.utility.Vector3iVector(meshvertices_cropped)
+#mesh.vertices = o3d.utility.Vector3iVector(meshvertices_cropped)
+mesh.triangles = o3d.utility.Vector3iVector(meshtriang_cropped)
 
 o3d.visualization.draw_geometries([mesh])
-
-
 '''
-mesh1 = mesh
+#%%
+# Suggested in documentation
+mesh1 = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 meshtriang = np.asarray(mesh1.triangles)[:len(mesh1.triangles) // 2 :]
 meshtriangnorm = np.asarray(mesh1.triangle_normals)[:len(mesh1.triangles) // 2 :]
 
 print("We make a partial mesh of only the first half triangles.")
 mesh1.triangles = o3d.utility.Vector3iVector(
-    np.asarray(mesh1.triangles)[:len(mesh1.triangles) // 2 :])
+    np.asarray(mesh1.triangles)[:len(mesh1.triangles) // 2+ len(mesh1.triangles) // 4 :])
 mesh1.triangle_normals = o3d.utility.Vector3dVector(
-    np.asarray(mesh1.triangle_normals)[:len(mesh1.triangle_normals) // 2, :])
+    np.asarray(mesh1.triangle_normals)[:len(mesh1.triangle_normals) // 2+ len(mesh1.triangles) // 4, :])
 print(mesh1.triangles)
 o3d.visualization.draw_geometries([mesh1])
-'''
+
 
 #%% Downsample the point cloud
 # (from here on, we are following http://www.open3d.org/docs/release/tutorial/geometry/pointcloud_outlier_removal.html)
