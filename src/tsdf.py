@@ -9,7 +9,8 @@ from read_write_model import read_images_text, read_cameras_text
 from read_write_dense import read_array
 
 # Useful functions
-from utils import visualize_cloud, quaternion_rotation_matrix
+from utils import visualize_cloud#, quaternion_rotation_matrix
+from scipy.spatial.transform import Rotation as R
 
 visualize_pcd = False
 visualize_mesh = True
@@ -39,7 +40,8 @@ translation = np.array(translation)
 
 transformation_matrices = []
 for i in range(len(quaternion)):
-    rotation_matrix = quaternion_rotation_matrix(quaternion[i])
+    rotation_matrix = R.from_quat(quaternion[i]).as_matrix()
+    #rotation_matrix = quaternion_rotation_matrix(quaternion[i])
     transformation = np.c_[rotation_matrix, translation[i]]
     transformation = np.vstack((transformation, np.array([0,0,0,1])))
     transformation_matrices.append(transformation)
@@ -85,9 +87,11 @@ depth_maps = np.array(depth_maps)
 #%%
 # Follow this tutorial for TSDF volume integration:
 # http://www.open3d.org/docs/release/tutorial/pipelines/rgbd_integration.html#TSDF-volume-integration
+from time import asctime
+print(asctime())
 
 volume = o3d.pipelines.integration.ScalableTSDFVolume(
-    voxel_length = 0.2 / 512.0, 
+    voxel_length = 0.15 / 512.0, 
     sdf_trunc = 0.002, 
     color_type=o3d.pipelines.integration.TSDFVolumeColorType.RGB8)
 
@@ -96,6 +100,7 @@ for i in range(len(depth_maps)):
         print("Integrate image no {:d} into the volume.".format(i))
     color = o3d.io.read_image('../../3D-data/images/frame-' + f'{i+1:05}' + '.jpg')
     depth = o3d.io.read_image('../../3D-data/depth_images/frame-' + f'{i+1:05}' + '.png')
+    #depth = o3d.cpu.pybind.geometry.Image(depth_map[i])
     #color = o3d.io.read_image("color/{:05d}.jpg".format(i))
     #depth = o3d.io.read_image("depth/{:05d}.png".format(i))
     #print(np.max(np.asarray(depth)))
@@ -110,6 +115,8 @@ for i in range(len(depth_maps)):
         intrinsics,
         np.linalg.inv(trajectories[i])) # was transformation_matrices
 
+
+print(asctime())
 # Extract a mesh and visualize it
 print("Extract a triangle mesh from the volume and visualize it.")
 mesh = volume.extract_triangle_mesh()
@@ -118,14 +125,15 @@ mesh.compute_vertex_normals()
 print(mesh)
 #%%
 if visualize_mesh == True:
-    #visualize_cloud(mesh)
+    visualize_cloud(mesh)
+    '''
     o3d.visualization.draw_geometries([mesh],
                                   front=[0.5297, -0.1873, -0.8272],
                                   lookat=[2.0712, 2.0312, 1.7251],
                                   up=[-0.0558, -0.9809, 0.1864],
                                   zoom=0.47)
 
-
+'''
 
 
 

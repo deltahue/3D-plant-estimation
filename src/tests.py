@@ -33,3 +33,15 @@ for i in range((len(test_transformation_matrices)-1)):
 
 test_trajectories = np.array(test_trajectories)
 print(test_trajectories)
+
+
+#%% Test quaternion
+from utils import quaternion_rotation_matrix
+
+from scipy.spatial.transform import Rotation as R
+r = R.from_quat([0, 0, np.sin(np.pi/4), np.cos(np.pi/4)])
+print(r.as_matrix())
+
+print(quaternion_rotation_matrix(r.as_quat()))
+
+
