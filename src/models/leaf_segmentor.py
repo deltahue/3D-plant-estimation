@@ -2,11 +2,13 @@
 import open3d as o3d
 import matplotlib.pyplot as plt
 import numpy as np
+import sklearn as sk
 #######################################
 # UTILS
 #######################################
 # import cloud
 def import_3d_cloud(path):
+    #return o3d.io.read_triangle_mesh(path)
     return o3d.io.read_point_cloud(path)
 
 
@@ -24,7 +26,7 @@ def voxel_downsampling(point_cloud, vox_size=0.05):
     return point_cloud.voxel_down_sample(voxel_size=vox_size)
 
 
-# clustering
+# clustering methods
 def dbscan(point_cloud, debug=False):
     # TODO Gridsearch for param
 
@@ -40,6 +42,20 @@ def dbscan(point_cloud, debug=False):
     point_cloud.colors = o3d.utility.Vector3dVector(colors[:, :3])
 
     o3d.visualization.draw_geometries([point_cloud])
+
+    return point_cloud
+
+
+def spectral_clustering(point_cloud):
+
+    return 'Todo'
+
+
+def hierarchical_clustering(point_clustering):
+
+    return 'Todo'
+
+
 
 
 # visualize
@@ -60,11 +76,11 @@ def display_inlier_outlier(cloud, ind):
 # PIPELINES
 #######################################
 
-def preprocessing(point_cloud, debug=False):
+def preprocessing(point_cloud, debug=True):
     point_cloud = voxel_downsampling(point_cloud, 0.05)
     if debug:
         show_point_cloud(point_cloud, 'Downsampled')
-    point_cloud = remove_outlier(point_cloud, debug)
+    #point_cloud = remove_outlier(point_cloud, debug)
     if debug:
         show_point_cloud(point_cloud, 'Outliers Removed')
 
@@ -75,12 +91,16 @@ def clustering(point_cloud, debug=False):
     point_cloud = dbscan(point_cloud, debug)
 
 if __name__ == '__main__':
-    path = '../../data/processed/init_testing/avocado_init_test.ply'
+    #path = '../../data/processed/init_testing/fused.ply'
+    path = '../../data/processed/meshed/meshed-poisson.ply'
+    #path = '../../data/processed/init_testing/merged_avocado_V3_Opensfm.ply'
+
+
     pc = import_3d_cloud(path)
     show_point_cloud(pc, 'Raw PC')
-    processed = preprocessing(pc, debug=False)
-    show_point_cloud(pc, 'Processed PC')
-    clustering(processed, True)
+    #processed = preprocessing(pc, debug=True)
+    #show_point_cloud(pc, 'Processed PC')
+    clustering(pc, True)
 
 
 
