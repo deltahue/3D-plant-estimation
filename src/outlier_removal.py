@@ -28,9 +28,16 @@ mesh1 = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 print(mesh1)
 
 # Need to rotate the bounding box 45 degrees to have the plant approximately in center
-bbox = o3d.geometry.OrientedBoundingBox(center = np.array([2.5,-0.25,4.5]),
+bbox = o3d.geometry.OrientedBoundingBox(#center = np.array([2.5,-0.25,4.5]),
+                                        center = np.array([2.5,-2,4.5]),
+                                        #R = np.array([[1,0,0],[0,1,0],[0,0,1]]),
+                                        #R = np.array([[1,0,0],[0,3/np.sqrt(2),-1/2],[0,1/2,3/np.sqrt(2)]]),
                                         R = np.array([[1,0,0],[0,1/np.sqrt(2),-1/np.sqrt(2)],[0,1/np.sqrt(2),1/np.sqrt(2)]]),
-                                        extent = np.array([5,7.5,5])
+                                        #R = np.matmul(
+                                        #    np.array([[1,0,0],[0,1/np.sqrt(2),-1/np.sqrt(2)],[0,1/np.sqrt(2),1/np.sqrt(2)]]),
+                                        #    np.array([[1/np.sqrt(2),0,1/np.sqrt(2)],[0,1,0],[-1/np.sqrt(2),0,1/np.sqrt(2)]])),
+                                        #extent = np.array([5,7.5,5])
+                                        extent = np.array([5,5,4.5])
                                         )
 
 cropped_mesh = mesh1.crop(bbox)
@@ -40,7 +47,7 @@ visualize_cloud(cropped_mesh)
 
 #%%
 # Export results
-o3d.io.write_triangle_mesh('../../3D-data/cropped_mesh.ply', cropped_mesh)
+o3d.io.write_triangle_mesh('../../3D-data/cropped_mesh_smaller.ply', cropped_mesh)
 
 #%% Also crop the point cloud and export results
 
