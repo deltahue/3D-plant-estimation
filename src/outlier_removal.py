@@ -32,7 +32,8 @@ bbox = o3d.geometry.OrientedBoundingBox(#center = np.array([2.5,-0.25,4.5]),
                                         center = np.array([2.5,-2,4.5]),
                                         #R = np.array([[1,0,0],[0,1,0],[0,0,1]]),
                                         #R = np.array([[1,0,0],[0,3/np.sqrt(2),-1/2],[0,1/2,3/np.sqrt(2)]]),
-                                        R = np.array([[1,0,0],[0,1/np.sqrt(2),-1/np.sqrt(2)],[0,1/np.sqrt(2),1/np.sqrt(2)]]),
+                                        #R = np.array([[1,0,0],[0,1/np.sqrt(2),-1/np.sqrt(2)],[0,1/np.sqrt(2),1/np.sqrt(2)]]),
+                                        R = np.array([[1,0,0],[0,np.cos(np.radians(45)),-1* np.sin(np.radians(45))],[0,np.cos(np.radians(45)),np.sin(np.radians(45))]]),
                                         #R = np.matmul(
                                         #    np.array([[1,0,0],[0,1/np.sqrt(2),-1/np.sqrt(2)],[0,1/np.sqrt(2),1/np.sqrt(2)]]),
                                         #    np.array([[1/np.sqrt(2),0,1/np.sqrt(2)],[0,1,0],[-1/np.sqrt(2),0,1/np.sqrt(2)]])),
@@ -53,7 +54,7 @@ o3d.io.write_triangle_mesh('../../3D-data/cropped_mesh_smaller.ply', cropped_mes
 
 cropped_pcd = pcd.crop(bbox)
 visualize_cloud(cropped_pcd)
-o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw.ply', cropped_pcd)
+o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw_smaller.ply', cropped_pcd)
 
 #%% Downsample and remove outliers from cropped point cloud
 
@@ -78,7 +79,7 @@ visualize_cloud(rad_cl)
 
 #%%
 
-o3d.io.write_point_cloud('../../3D-data/cropped_pcd_downsampled_and_filtered_rad20.ply', rad_cl)
+o3d.io.write_point_cloud('../../3D-data/cropped_pcd_smaller_downsampled_and_filtered_rad20.ply', rad_cl)
 
 #%% Finally, try mesh generation on the filtered pointcloud
 
@@ -89,7 +90,6 @@ print(time.asctime())
 #%% 
 visualize_mesh(mesh_poi_rad14_scale2)
 o3d.io.write_triangle_mesh('../../3D-data/mesh_from_cropped_pcd.ply', mesh_poi_rad14_scale2)
-<<<<<<< HEAD
 
 #%%
 
