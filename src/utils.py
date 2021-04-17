@@ -21,6 +21,19 @@ def display_inlier_outlier(cloud, ind):
                                       lookat=[2.6172, 2.0475, 1.532],
                                       up=[-0.0694, -0.9768, 0.2024])
     
+def compute_rotation_matrix(rot_x, rot_y, rot_z):
+    Rx = np.array([[1,0,0],
+                   [0,np.cos(np.radians(rot_x)),np.sin(np.radians(rot_x))*-1],
+                   [0,np.sin(np.radians(rot_x)),np.cos(np.radians(rot_x))]]),
+    Ry= np.array([[np.cos(np.radians(rot_y)),0,np.sin(np.radians(rot_y))],
+                   [0,1,0],
+                   [-1*np.sin(np.radians(rot_y)),0,np.cos(np.radians(rot_y))]]),
+    Rz = np.array([[np.cos(np.radians(rot_z)),-1*np.sin(np.radians(rot_z)),0],
+                   [np.sin(np.radians(rot_z)),np.cos(np.radians(rot_z)),0],
+                   [0,0,1]]),
+    
+    return np.resize(np.matmul(Rz, np.matmul(Ry, Rx)), (3,3))
+    
 
 # Mesh generation (compare 3 methods)
 # http://www.open3d.org/docs/release/python_api/open3d.geometry.TriangleMesh.html
@@ -29,16 +42,6 @@ def display_inlier_outlier(cloud, ind):
 # Help from: 
 #https://stackoverflow.com/questions/56965268/how-do-i-convert-a-3d-point-cloud-ply-into-a-mesh-with-faces-and-vertices
 
-
-def BPA(cloud, radius):
-    # estimate radius for rolling ball
-    distances = cloud.compute_nearest_neighbor_distance()
-    avg_dist = np.mean(distances)
-    radius = radius*avg_dist  
-    
-    radii = o3d.utility.DoubleVector([radius, radius * 2])
-    mesh_BPA = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(cloud, radii)
-    return mesh_BPA
 
 def Poisson(cloud, depth=8, width=0, scale=1.1,linear_fit=False):
     mesh_poisson = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(cloud,depth=depth, width=width, scale=scale, 
