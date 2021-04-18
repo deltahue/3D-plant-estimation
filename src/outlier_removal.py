@@ -15,17 +15,31 @@ mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 #mesh = o3d.io.read_triangle_mesh('../../3D-data/mesh_poi_stat_cl_30_1p5_dep12.ply')
 #print(pcd)
 #print(np.asarray(pcd.points))
-print(mesh)
-#visualize_cloud(pcd)
-visualize_cloud(mesh)
+#print(mesh)
+visualize_cloud(pcd)
+#visualize_cloud(mesh)
 
 #%% Bounding box to crop the mesh to just the plant
 
 # Need to rotate the bounding box 45 degrees to have the plant approximately in center
-bbox_whole = o3d.geometry.OrientedBoundingBox(center = np.array([2.5,-2,4.5]),
-                                        R = compute_rotation_matrix(45,0,0),
-                                        extent = np.array([5,5,4.5])
+
+cen = np.array([2.2,-2,4.5])
+ext = np.array([5,5,4.5])
+bbox_whole = o3d.geometry.OrientedBoundingBox(center = cen,
+                                        R = compute_rotation_matrix(45,0,-25),
+                                        extent = ext
                                         )
+
+bbox_whole.color= (0,1,0)
+
+minb = np.array([cen[0] - ext[0]/2,cen[1] - ext[1]/2,cen[2] - ext[2]/2])
+maxb = np.array([cen[0] + ext[0]/2,cen[1] + ext[1]/2,cen[2] + ext[2]/2])
+aabb = o3d.geometry.AxisAlignedBoundingBox(min_bound = minb, max_bound = maxb)
+aabb.color= (1,0,0)
+
+cropped_pcd = pcd.crop(bbox_whole)
+#visualize_cloud(cropped_pcd)
+o3d.visualization.draw_geometries([cropped_pcd, bbox_whole ,aabb])
 
 #%% Bounding box to crop individual leaves
 
@@ -81,13 +95,14 @@ voxel_down_cropped_pcd = cropped_pcd.voxel_down_sample(voxel_size=0.02)
 
 
 print("Radius oulier removal")
-rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=80, radius=0.1)
+rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1) #80 for leaf
 print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
 visualize_cloud(rad_cl)
 
 #%%
 
+o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_rad20_0p1_nopot.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_leaf_filtered_rad80_0p1.ply', rad_cl)
 
 #%% same for whole point cloud
