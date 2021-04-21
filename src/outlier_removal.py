@@ -10,7 +10,8 @@ from utils import visualize_cloud, visualize_mesh, display_inlier_outlier, Poiss
 #http://www.open3d.org/docs/release/tutorial/geometry/pointcloud.html
 
 print("Load a ply point cloud, print it, and render it")
-pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
+#pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
+pcd = o3d.io.read_point_cloud("../../3D-data/point_cloud_color.ply")
 mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 #mesh = o3d.io.read_triangle_mesh('../../3D-data/mesh_poi_stat_cl_30_1p5_dep12.ply')
 #print(pcd)
@@ -22,11 +23,18 @@ visualize_cloud(pcd)
 #%% Bounding box to crop the mesh to just the plant
 
 # Need to rotate the bounding box 45 degrees to have the plant approximately in center
-
+# Original
+'''
 cen = np.array([2.2,-2,4.5])
 ext = np.array([5,5,4.5])
+rot_matrix = compute_rotation_matrix(45,0,-25)
+'''
+cen = np.array([1.5,-1,3.5])
+ext = np.array([2,2,1.5])
+rot_matrix = compute_rotation_matrix(0,35,0)
+
 bbox_whole = o3d.geometry.OrientedBoundingBox(center = cen,
-                                        R = compute_rotation_matrix(45,0,-25),
+                                        R = rot_matrix,
                                         extent = ext
                                         )
 
@@ -39,6 +47,7 @@ aabb.color= (1,0,0)
 
 cropped_pcd = pcd.crop(bbox_whole)
 #visualize_cloud(cropped_pcd)
+o3d.visualization.draw_geometries([cropped_pcd])
 o3d.visualization.draw_geometries([cropped_pcd, bbox_whole ,aabb])
 
 #%% Bounding box to crop individual leaves
@@ -66,11 +75,12 @@ aabb.color= (1,0,0)
 
 #%% Crop the point cloud and export results
 
-cropped_pcd = pcd.crop(bbox)
+cropped_pcd = pcd.crop(bbox_whole)
 visualize_cloud(cropped_pcd)
 #o3d.visualization.draw_geometries([cropped_pcd, bbox,aabb])
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw_smaller.ply', cropped_pcd)
 #o3d.io.write_point_cloud('../../3D-data/leaf_raw_pointcloud.ply', cropped_pcd)
+o3d.io.write_point_cloud('../../3D-data/new_raw_pointcloud.ply', cropped_pcd)
 
 
 #%% Crop the mesh
@@ -95,14 +105,16 @@ voxel_down_cropped_pcd = cropped_pcd.voxel_down_sample(voxel_size=0.02)
 
 
 print("Radius oulier removal")
-rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1) #80 for leaf
+rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=40, radius=0.1) #80 for leaf
 print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
-visualize_cloud(rad_cl)
+#visualize_cloud(rad_cl)
+o3d.visualization.draw_geometries([rad_cl])
 
 #%%
 
-o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_rad20_0p1_nopot.ply', rad_cl)
+o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_newplant.ply', rad_cl)
+#o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_rad20_0p1_nopot.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_leaf_filtered_rad80_0p1.ply', rad_cl)
 
 #%% same for whole point cloud
@@ -118,8 +130,8 @@ print("Radius oulier removal")
 rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=10, radius=0.1)
 print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
-visualize_cloud(rad_cl)
-
+#visualize_cloud(rad_cl)
+o3d.visualization.draw_geometries([rad_cl])
 #%% Finally, try mesh generation on the filtered pointcloud
 print(time.asctime())
 with o3d.utility.VerbosityContextManager(
