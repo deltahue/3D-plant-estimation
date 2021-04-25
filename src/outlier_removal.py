@@ -101,15 +101,24 @@ o3d.visualization.draw_geometries([cropped_mesh, bbox,aabb])
 
 print("Downsample the point cloud with a voxel of 0.02")
 voxel_down_cropped_pcd = cropped_pcd.voxel_down_sample(voxel_size=0.02)
+o3d.visualization.draw_geometries([voxel_down_cropped_pcd])
 #visualize_cloud(voxel_down_cropped_pcd)
 
-
+#%%
 print("Radius oulier removal")
-rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=40, radius=0.1) #80 for leaf
+rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=60, radius=0.1) #80 for leaf
 print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
 #visualize_cloud(rad_cl)
 o3d.visualization.draw_geometries([rad_cl])
+
+#%%
+
+print("Statistical outlier removal")
+stat_cl, ind = voxel_down_cropped_pcd.remove_statistical_outlier(nb_neighbors=30, std_ratio=1.5) # was 20, 2.0 
+print("number of outliers is: " + str(len(pcd.compute_nearest_neighbor_distance()) - len(ind)))
+display_inlier_outlier(voxel_down_cropped_pcd, ind)
+o3d.visualization.draw_geometries([stat_cl])
 
 #%%
 
