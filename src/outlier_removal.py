@@ -80,7 +80,7 @@ visualize_cloud(cropped_pcd)
 #o3d.visualization.draw_geometries([cropped_pcd, bbox,aabb])
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw_smaller.ply', cropped_pcd)
 #o3d.io.write_point_cloud('../../3D-data/leaf_raw_pointcloud.ply', cropped_pcd)
-o3d.io.write_point_cloud('../../3D-data/new_raw_pointcloud.ply', cropped_pcd)
+#o3d.io.write_point_cloud('../../3D-data/new_raw_pointcloud.ply', cropped_pcd)
 
 
 #%% Crop the mesh
@@ -115,7 +115,7 @@ o3d.visualization.draw_geometries([rad_cl])
 #%%
 
 print("Statistical outlier removal")
-stat_cl, ind = voxel_down_cropped_pcd.remove_statistical_outlier(nb_neighbors=30, std_ratio=1.5) # was 20, 2.0 
+stat_cl, ind = voxel_down_cropped_pcd.remove_statistical_outlier(nb_neighbors=50, std_ratio=1.5) # was 20, 2.0 
 print("number of outliers is: " + str(len(pcd.compute_nearest_neighbor_distance()) - len(ind)))
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
 o3d.visualization.draw_geometries([stat_cl])
