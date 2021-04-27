@@ -10,8 +10,8 @@ from utils import visualize_cloud, visualize_mesh, display_inlier_outlier, Poiss
 #http://www.open3d.org/docs/release/tutorial/geometry/pointcloud.html
 
 print("Load a ply point cloud, print it, and render it")
-#pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
-pcd = o3d.io.read_point_cloud("../../3D-data/point_cloud_color.ply")
+pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
+#pcd = o3d.io.read_point_cloud("../../3D-data/point_cloud_color.ply")
 mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 #mesh = o3d.io.read_triangle_mesh('../../3D-data/mesh_poi_stat_cl_30_1p5_dep12.ply')
 #print(pcd)
@@ -75,7 +75,8 @@ aabb.color= (1,0,0)
 
 #%% Crop the point cloud and export results
 
-cropped_pcd = pcd.crop(bbox_whole)
+#cropped_pcd = pcd.crop(bbox_whole)
+cropped_pcd = pcd.crop(bbox)
 visualize_cloud(cropped_pcd)
 #o3d.visualization.draw_geometries([cropped_pcd, bbox,aabb])
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw_smaller.ply', cropped_pcd)
@@ -106,7 +107,7 @@ o3d.visualization.draw_geometries([voxel_down_cropped_pcd])
 
 #%%
 print("Radius oulier removal")
-rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=60, radius=0.1) #80 for leaf
+rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=80, radius=0.1) #80 for leaf, 60 for newplant
 print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
 #visualize_cloud(rad_cl)
@@ -122,7 +123,7 @@ o3d.visualization.draw_geometries([stat_cl])
 
 #%%
 
-o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_newplant.ply', rad_cl)
+#o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_newplant.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_rad20_0p1_nopot.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_leaf_filtered_rad80_0p1.ply', rad_cl)
 
@@ -141,6 +142,9 @@ print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.poin
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
 #visualize_cloud(rad_cl)
 o3d.visualization.draw_geometries([rad_cl])
+
+
+
 #%% Finally, try mesh generation on the filtered pointcloud
 print(time.asctime())
 with o3d.utility.VerbosityContextManager(
@@ -150,7 +154,9 @@ with o3d.utility.VerbosityContextManager(
 print(poisson_mesh)
 print(time.asctime())
 #%% 
-visualize_mesh(poisson_mesh)
+#visualize_mesh(poisson_mesh)
+o3d.visualization.draw_geometries([poisson_mesh])
+
 
 #%%
 
@@ -172,7 +178,44 @@ print('remove low density vertices')
 vertices_to_remove = densities < np.quantile(densities, 0.1)
 poisson_mesh.remove_vertices_by_mask(vertices_to_remove)
 print(poisson_mesh)
+
+#%%
 visualize_mesh(poisson_mesh)
+
+#%% Taubin filtering experiments
+
+num_iter = [5,10,50,100]
+for i in num_iter:
+    print('filter with Taubin with '+ str(i) + ' iterations')
+    mesh_taub = poisson_mesh.filter_smooth_taubin(i, 0.5, -0.53)
+    mesh_taub.compute_vertex_normals()
+    o3d.visualization.draw_geometries([mesh_taub])
+
+
+#%% Laplacian filtering experiments
+num_iter = [5,10,50,100]
+for i in num_iter:
+    print('filter with Laplacian with '+ str(i) + ' iterations')
+    mesh_lap = poisson_mesh.filter_smooth_laplacian(i, 0.5)
+    mesh_lap.compute_vertex_normals()
+    o3d.visualization.draw_geometries([mesh_lap])
+    
+#%%
+
+lams = [0.2,0.4,0.6,0.8] # Small difference, more smoothness for higher lambda
+for i in lams:
+    print('filter with Laplacian with lambda '+ str(i) + ' iterations')
+    mesh_lap = poisson_mesh.filter_smooth_laplacian(10, i)
+    mesh_lap.compute_vertex_normals()
+    o3d.visualization.draw_geometries([mesh_lap])
+    
+#%%
+
+num_iter = 10
+print('filter with Taubin with '+ str(num_iter) + ' iterations')
+mesh_taub = poisson_mesh.filter_smooth_taubin(num_iter, 0.5, -0.53)   
+mesh_taub.compute_vertex_normals()
+o3d.visualization.draw_geometries([mesh_taub])
 
 #%%
 #o3d.io.write_triangle_mesh('../../3D-data/own_mesh.ply', poisson_mesh)
