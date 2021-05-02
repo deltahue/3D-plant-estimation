@@ -10,7 +10,8 @@ from utils import visualize_cloud, visualize_mesh, display_inlier_outlier, Poiss
 #http://www.open3d.org/docs/release/tutorial/geometry/pointcloud.html
 
 print("Load a ply point cloud, print it, and render it")
-pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
+#pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
+pcd = o3d.io.read_point_cloud("../../3D-data/avocado_pcd.ply")
 #pcd = o3d.io.read_point_cloud("../../3D-data/point_cloud_color.ply")
 mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 #mesh = o3d.io.read_triangle_mesh('../../3D-data/mesh_poi_stat_cl_30_1p5_dep12.ply')
@@ -29,9 +30,16 @@ cen = np.array([2.2,-2,4.5])
 ext = np.array([5,5,4.5])
 rot_matrix = compute_rotation_matrix(45,0,-25)
 '''
+# NEw plant
+'''
 cen = np.array([1.5,-1,3.5])
 ext = np.array([2,2,1.5])
 rot_matrix = compute_rotation_matrix(0,35,0)
+'''
+# Avocado take 3
+cen = np.array([1.5,1,2])
+ext = np.array([5,5,4])
+rot_matrix = compute_rotation_matrix(0,30,0)
 
 bbox_whole = o3d.geometry.OrientedBoundingBox(center = cen,
                                         R = rot_matrix,
@@ -76,8 +84,9 @@ aabb.color= (1,0,0)
 #%% Crop the point cloud and export results
 
 #cropped_pcd = pcd.crop(bbox_whole)
-cropped_pcd = pcd.crop(bbox)
+cropped_pcd = pcd.crop(bbox_whole)
 visualize_cloud(cropped_pcd)
+#o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw_avocado.ply', cropped_pcd)
 #o3d.visualization.draw_geometries([cropped_pcd, bbox,aabb])
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw_smaller.ply', cropped_pcd)
 #o3d.io.write_point_cloud('../../3D-data/leaf_raw_pointcloud.ply', cropped_pcd)
@@ -107,7 +116,7 @@ o3d.visualization.draw_geometries([voxel_down_cropped_pcd])
 
 #%%
 print("Radius oulier removal")
-rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=80, radius=0.1) #80 for leaf, 60 for newplant
+rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1) #80 for leaf, 60 for newplant
 print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
 #visualize_cloud(rad_cl)
@@ -123,6 +132,7 @@ o3d.visualization.draw_geometries([stat_cl])
 
 #%%
 
+o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_newplant.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_rad20_0p1_nopot.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_leaf_filtered_rad80_0p1.ply', rad_cl)
