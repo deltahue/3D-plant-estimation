@@ -1,0 +1,11 @@
+# parameters for hdbscan
+path: '/home/david/3D-vision/3D-plant-estimation/data/processed/pcd/cropped_pcd_filtered_avocado_rad20_0p1.ply'
+show_raw: True
+
+downsample_div: 300
+
+hdbscan:
+  min_cluster_size: 300
+  gen_min_span_tree: True
+  cluster_selection_method: 'eom' # 'eom' or 'leaf'
+  min_samples: 5
