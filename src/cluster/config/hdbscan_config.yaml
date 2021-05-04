@@ -1,0 +1,11 @@
+# parameters for hdbscan
+path: '/home/soley/3D-data/cropped_pcd_filtered_newplant.ply'
+show_raw: True
+
+downsample_div: 300
+
+hdbscan:
+  min_cluster_size: 300
+  gen_min_span_tree: True
+  cluster_selection_method: 'eom' # 'eom' or 'leaf'
+  min_samples: 5
