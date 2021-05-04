@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from utils import visualize_mesh
 
 # Generates a poisson reconstructed mesh for a given pointcloud pcd
-def generate_mesh(pcd, taubin_filter = False):
+def generate_mesh(pcd, visualize = False):
 
     with o3d.utility.VerbosityContextManager(
             o3d.utility.VerbosityLevel.Debug) as cm:
@@ -13,9 +13,11 @@ def generate_mesh(pcd, taubin_filter = False):
             pcd, depth=9)
     print(poisson_mesh)
     
-    o3d.visualization.draw_geometries([poisson_mesh])
+    if visualize == True:
+        o3d.visualization.draw_geometries([poisson_mesh])
 
-    print('visualize densities')
+        print('visualize densities')
+    
     densities = np.asarray(densities)
     density_colors = plt.get_cmap('plasma')(
         (densities - densities.min()) / (densities.max() - densities.min()))
@@ -25,29 +27,29 @@ def generate_mesh(pcd, taubin_filter = False):
     density_mesh.triangles = poisson_mesh.triangles
     density_mesh.triangle_normals = poisson_mesh.triangle_normals
     density_mesh.vertex_colors = o3d.utility.Vector3dVector(density_colors)
-    visualize_mesh(density_mesh)
+    
+    if visualize == True:
+        visualize_mesh(density_mesh)
 
     print('remove low density vertices')
     vertices_to_remove = densities < np.quantile(densities, 0.1)
     poisson_mesh.remove_vertices_by_mask(vertices_to_remove)
     print(poisson_mesh)
 
+    if visualize == True:
+        visualize_mesh(poisson_mesh)
 
-    visualize_mesh(poisson_mesh)
 
-    if taubin_filter == True:
-        #num_iter = [5,10,50,100]
-        num_iter = [10]
-        for i in num_iter:
-            print('filter with Taubin with '+ str(i) + ' iterations')
-            mesh_taub = poisson_mesh.filter_smooth_taubin(i, 0.5, -0.53)
-            mesh_taub.compute_vertex_normals()
-            o3d.visualization.draw_geometries([mesh_taub])
-        
-        return mesh_taub
+# Takes in a (Poisson reconstructed) mesh and returns a Taubin smoothed mesh with num_iter iterations
+def smooth_mesh(mesh, num_iter = 10, visualize = False):
+    print('filter with Taubin with '+ str(num_iter) + ' iterations')
+    mesh_taub = mesh.filter_smooth_taubin(num_iter, 0.5, -0.53)
+    mesh_taub.compute_vertex_normals()
     
-    return poisson_mesh
-    
+    if visualize == True:
+        o3d.visualization.draw_geometries([mesh_taub])
+
+    return mesh_taub
 
 
 
