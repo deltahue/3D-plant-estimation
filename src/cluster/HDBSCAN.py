@@ -72,8 +72,35 @@ def cluster_pc_HDBSCAN(pointcloud, config):
     labels = hdbscan.labels_
     print("Found " + str(len(np.unique(labels))-1) + " clusters!")
 
+    if config['hdbscan']['hdbscan_debug']:
+        hdbscan.condensed_tree_.plot(select_clusters=True)
+        plt.show()
     # TODO debug plotting
     return labels
+
+
+def extract_clusters(pointcloud, labels, config):
+    labels_classes = np.unique(labels)
+    points = np.asarray(pointcloud.points)
+    colors = np.asarray(pointcloud.colors)
+    print(points.shape)
+    clusters = {}
+    for label in labels_classes:
+        c_points = points[labels == label, :]
+        c_colors = colors[labels == label, :]
+
+        cluster_pc = o3d.geometry.PointCloud()
+        cluster_pc.points = o3d.utility.Vector3dVector(c_points)
+        cluster_pc.colors = o3d.utility.Vector3dVector(c_colors)
+        clusters[label] = cluster_pc
+
+    if config['show_extracted_clusters']:
+        for label in labels_classes:
+            o3d.visualization.draw_geometries([clusters[label]])
+
+    return clusters
+
+
 
 
 if __name__== "__main__":
@@ -86,13 +113,18 @@ if __name__== "__main__":
     if config['show_raw']:
         o3d.visualization.draw_geometries([pc])
 
-    # downsample
-    pc_ds = downsample(pc, config['downsample_div'])
-    print("Downsampled to " +str(pc_ds))
+    # downsample dont do this!
+    #pc_ds = downsample(pc, config['downsample_div'])
+    #print("Downsampled to " +str(pc_ds))
     # hdbscan
-    labels = cluster_pc_HDBSCAN(pc_ds, config)
+    labels = cluster_pc_HDBSCAN(pc, config)
 
-    show_clustering_result(pc_ds, labels)
+    show_clustering_result(pc, labels)
 
-
-
+    extract_clusters(pc, labels, config)
+    
+    
+    
+    
+    
+    
