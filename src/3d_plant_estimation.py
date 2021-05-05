@@ -8,10 +8,10 @@ from utils import visualize_cloud, display_inlier_outlier, create_bounding_box, 
 from cluster.clustering_functions import read_config, show_clustering_result, \
     cluster_pc_HDBSCAN, extract_clusters
 
-from mesh_generation import generate_mesh
+from mesh_generation import generate_mesh, smooth_mesh
 
 save_results = False
-visualize    = False
+visualize    = True
 
 if __name__== "__main__":
     
@@ -81,14 +81,16 @@ if __name__== "__main__":
     # TODO: Identify leaves and only generate mesh for them
     for lab in range(len(clusters)):
         o3d.visualization.draw_geometries([clusters[lab]])
+        clusters[lab].estimate_normals(
+            search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
         mesh = generate_mesh(clusters[lab], True)
-        if save_results == True:
-            save_mesh('mesh_label'+str(lab)+'.ply' , mesh)
+        smooth = smooth_mesh(clusters[lab], True) 
+        
+        #if save_results == True:
+            #TODO: find bug, probably in savestring
+            #save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , mesh)
     
 
-    
-    #TODO: Extract meshes from individual leaves
-    
     
     
     

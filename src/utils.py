@@ -29,7 +29,17 @@ def visualize_cloud(pcd):
                                   zoom=0.1500,
                                   front= [-0.4257, 0.2125, -0.7000],
                                   lookat=[2.6172, 2.0475, 1.532],
-                                  up=[-0.0694, -0.9768, 0.2024])    
+                                  up=[-0.0694, -0.9768, 0.2024])   
+    
+# VIsualize mesh
+def visualize_mesh(mesh):
+    print("Try to render a mesh with normals (exist: " +
+          str(mesh.has_vertex_normals()) + ") and colors (exist: " + str(mesh.has_vertex_colors()) + ")")
+    o3d.visualization.draw_geometries([mesh],
+                                  zoom=0.1500,#0.3412,
+                                  front= [-0.4257, 0.2125, -0.7000], #[0.4257, -0.2125, -0.8795],
+                                  lookat=[2.6172, 2.0475, 1.532],
+                                  up=[-0.0694, -0.9768, 0.2024]) 
     
 # Visualize point cloud outliers
 def display_inlier_outlier(cloud, ind):

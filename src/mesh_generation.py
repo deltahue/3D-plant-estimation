@@ -13,10 +13,10 @@ def generate_mesh(pcd, visualize = False):
             pcd, depth=9)
     print(poisson_mesh)
     
-    if visualize == True:
-        o3d.visualization.draw_geometries([poisson_mesh])
+    #if visualize == True:
+        #o3d.visualization.draw_geometries([poisson_mesh])
 
-        print('visualize densities')
+        #print('visualize densities')
     
     densities = np.asarray(densities)
     density_colors = plt.get_cmap('plasma')(
@@ -28,8 +28,8 @@ def generate_mesh(pcd, visualize = False):
     density_mesh.triangle_normals = poisson_mesh.triangle_normals
     density_mesh.vertex_colors = o3d.utility.Vector3dVector(density_colors)
     
-    if visualize == True:
-        visualize_mesh(density_mesh)
+    #if visualize == True:
+        #visualize_mesh(density_mesh)
 
     print('remove low density vertices')
     vertices_to_remove = densities < np.quantile(densities, 0.1)
