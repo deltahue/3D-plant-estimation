@@ -38,6 +38,8 @@ def generate_mesh(pcd, visualize = False):
 
     if visualize == True:
         visualize_mesh(poisson_mesh)
+        
+    return poisson_mesh
 
 
 # Takes in a (Poisson reconstructed) mesh and returns a Taubin smoothed mesh with num_iter iterations

@@ -8,6 +8,7 @@ from utils import visualize_cloud, display_inlier_outlier, create_bounding_box, 
 from cluster.clustering_functions import read_config, show_clustering_result, \
     cluster_pc_HDBSCAN, extract_clusters
 
+from mesh_generation import generate_mesh
 
 save_results = False
 visualize    = False
@@ -78,6 +79,17 @@ if __name__== "__main__":
     show_clustering_result(pc, labels)
 
     clusters = extract_clusters(pc, labels, config)
+    # Array of clusters indexed by labels
+    
+    # Generate and visualize mesh for each cluster
+    # TODO: Identify leaves and only generate mesh for them
+    for lab in range(len(clusters)):
+        o3d.visualization.draw_geometries([clusters[lab]])
+        mesh = generate_mesh(clusters[lab], True)
+        if save_results == True:
+            save_mesh('mesh_label'+str(lab)+'.ply' , mesh)
+    
+
     
     #TODO: Extract meshes from individual leaves
     
