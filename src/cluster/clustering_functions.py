@@ -1,6 +1,3 @@
-"""
-3D Vision 2021
-"""
 import open3d as o3d
 import yaml
 import numpy as np
@@ -29,9 +26,9 @@ def get_XYZHSV_np(pointcloud):
     return np.hstack([arr, carr])
 
 
-def downsample(pointcloud, div):
+def downsample(pc, div):
     voxel_size = max(pc.get_max_bound() - pc.get_min_bound()) / div
-    return pointcloud.voxel_down_sample(voxel_size=voxel_size)
+    return pc.voxel_down_sample(voxel_size=voxel_size)
 
 
 def create_voxel_grid(pointcloud, div):
@@ -99,32 +96,3 @@ def extract_clusters(pointcloud, labels, config):
             o3d.visualization.draw_geometries([clusters[label]])
 
     return clusters
-
-
-
-
-if __name__== "__main__":
-    # read files
-    # TODO IO function with try statement
-    config = read_config("./config/hdbscan_config.yaml")
-    path = config['path']
-    pc = o3d.io.read_point_cloud(path)
-    print(pc)
-    if config['show_raw']:
-        o3d.visualization.draw_geometries([pc])
-
-    # downsample dont do this!
-    #pc_ds = downsample(pc, config['downsample_div'])
-    #print("Downsampled to " +str(pc_ds))
-    # hdbscan
-    labels = cluster_pc_HDBSCAN(pc, config)
-
-    show_clustering_result(pc, labels)
-
-    extract_clusters(pc, labels, config)
-    
-    
-    
-    
-    
-    

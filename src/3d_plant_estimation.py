@@ -4,9 +4,12 @@ import numpy as np
 
 from utils import visualize_cloud, display_inlier_outlier, create_bounding_box, \
     save_point_cloud, save_mesh
+    
+from cluster.clustering_functions import read_config, show_clustering_result, \
+    cluster_pc_HDBSCAN, extract_clusters
 
 
-save_results = True
+save_results = False
 visualize    = False
 
 if __name__== "__main__":
@@ -56,4 +59,31 @@ if __name__== "__main__":
     
     if save_results == True:
         save_mesh('../../3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply', rad_cl)
+        
+    # read files
+    # TODO IO function with try statement
+    config = read_config("./cluster/config/hdbscan_config.yaml")
+    path = config['path']
+    pc = o3d.io.read_point_cloud(path)
+    print(pc)
+    if config['show_raw']:
+        o3d.visualization.draw_geometries([pc])
+
+    # downsample dont do this!
+    #pc_ds = downsample(pc, config['downsample_div'])
+    #print("Downsampled to " +str(pc_ds))
+    # hdbscan
+    labels = cluster_pc_HDBSCAN(pc, config)
+
+    show_clustering_result(pc, labels)
+
+    clusters = extract_clusters(pc, labels, config)
+    
+    #TODO: Extract meshes from individual leaves
+    
+    
+    
+    
+    
+    
     
