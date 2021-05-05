@@ -43,9 +43,12 @@ def create_voxel_grid(pointcloud, div):
 def show_clustering_result(pointcloud, labels):
     # TODO assert length
     n = len(np.unique(labels))-1
-    colors = plt.get_cmap("tab20")(labels / (n if n > 0 else 1))
+    if n < 20:
+        colors = plt.get_cmap("tab20")(labels / (n if n > 0 else 1))
+    else:
+        colors = plt.get_cmap("hsv")(labels / (n if n > 0 else 1))
     # make noise grey
-    colors[labels<0] = [0.7,0.7,0.7,0.7]
+    colors[labels<0] = [0.9,0.9,0.9,0.7]
 
     # copy pointcloud for visualization
     pc_vis = o3d.geometry.PointCloud(pointcloud)
