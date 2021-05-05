@@ -25,12 +25,6 @@ def get_XYZHSV_np(pointcloud):
     carr = C.rgb_to_hsv(carr)
     return np.hstack([arr, carr])
 
-
-def downsample(pc, div):
-    voxel_size = max(pc.get_max_bound() - pc.get_min_bound()) / div
-    return pc.voxel_down_sample(voxel_size=voxel_size)
-
-
 def create_voxel_grid(pointcloud, div):
     voxel_size = max(pointcloud.get_max_bound() - pointcloud.get_min_bound()) / div
     return o3d.geometry.VoxelGrid.create_from_point_cloud(pointcloud, voxel_size=voxel_size)

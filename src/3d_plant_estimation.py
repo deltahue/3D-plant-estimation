@@ -70,12 +70,8 @@ if __name__== "__main__":
     if config['show_raw']:
         o3d.visualization.draw_geometries([pc])
 
-    # downsample dont do this!
-    #pc_ds = downsample(pc, config['downsample_div'])
-    #print("Downsampled to " +str(pc_ds))
-    # hdbscan
-    labels = cluster_pc_HDBSCAN(pc, config)
 
+    labels = cluster_pc_HDBSCAN(pc, config)
     show_clustering_result(pc, labels)
 
     clusters = extract_clusters(pc, labels, config)
