@@ -10,8 +10,8 @@ from cluster.clustering_functions import read_config, show_clustering_result, \
 
 from mesh_generation import generate_mesh, smooth_mesh
 
-save_results = True
-visualize    = False
+save_results = False
+visualize    = True
 
 if __name__== "__main__":
     
@@ -87,12 +87,10 @@ if __name__== "__main__":
         clusters[lab].estimate_normals(
             search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
         mesh = generate_mesh(clusters[lab], visualize = visualize)
-        # TODO: Find bug in smoothing
-        #smooth = smooth_mesh(clusters[lab], True) 
+        smooth = smooth_mesh(mesh, 10, visualize) 
         
         if save_results == True:
-            #TODO: find bug, probably in savestring
-            save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , mesh)
+            save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , smooth)
     
 
     
