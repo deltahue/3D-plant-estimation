@@ -72,7 +72,9 @@ if __name__== "__main__":
 
 
     labels = cluster_pc_HDBSCAN(pc, config)
-    show_clustering_result(pc, labels)
+    
+    if visualize == True:
+        show_clustering_result(pc, labels)
 
     clusters = extract_clusters(pc, labels, config)
     # Array of clusters indexed by labels
@@ -80,10 +82,11 @@ if __name__== "__main__":
     # Generate and visualize mesh for each cluster
     # TODO: Identify leaves and only generate mesh for them
     for lab in range(len(clusters)-1):
-        o3d.visualization.draw_geometries([clusters[lab]])
+        if visualize == True:
+            o3d.visualization.draw_geometries([clusters[lab]])
         clusters[lab].estimate_normals(
             search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
-        mesh = generate_mesh(clusters[lab], True)
+        mesh = generate_mesh(clusters[lab], visualize = visualize)
         # TODO: Find bug in smoothing
         #smooth = smooth_mesh(clusters[lab], True) 
         

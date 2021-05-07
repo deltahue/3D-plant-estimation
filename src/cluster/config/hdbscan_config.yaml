@@ -2,7 +2,7 @@
 path: '/home/soley/3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply'
 #path: '/home/soley/3D-data/cropped_pcd_downsampled_and_filtered.ply'
 
-show_raw: True
+show_raw: False
 
 downsample_div: 300
 
@@ -11,6 +11,6 @@ hdbscan:
   gen_min_span_tree: True
   cluster_selection_method: 'eom' # 'eom' or 'leaf'
   min_samples: 5
-  hdbscan_debug: True
+  hdbscan_debug: False
 
-show_extracted_clusters: True
+show_extracted_clusters: False
