@@ -10,7 +10,7 @@ def generate_mesh(pcd, visualize = False):
     with o3d.utility.VerbosityContextManager(
             o3d.utility.VerbosityLevel.Debug) as cm:
         poisson_mesh, densities = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
-            pcd, depth=9)
+            pcd, depth=10)
     print(poisson_mesh)
     
     #if visualize == True:
@@ -32,7 +32,7 @@ def generate_mesh(pcd, visualize = False):
         #visualize_mesh(density_mesh)
 
     print('remove low density vertices')
-    vertices_to_remove = densities < np.quantile(densities, 0.1)
+    vertices_to_remove = densities < np.quantile(densities, 0.2)
     poisson_mesh.remove_vertices_by_mask(vertices_to_remove)
     print(poisson_mesh)
 

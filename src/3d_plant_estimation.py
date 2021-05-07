@@ -10,8 +10,8 @@ from cluster.clustering_functions import read_config, show_clustering_result, \
 
 from mesh_generation import generate_mesh, smooth_mesh
 
-save_results = False
-visualize    = True
+save_results = True
+visualize    = False
 
 if __name__== "__main__":
     
