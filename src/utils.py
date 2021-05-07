@@ -81,7 +81,7 @@ def save_point_cloud(path, pcd):
     
 # Saves mesh to the path (string)
 def save_mesh(path, mesh):
-    o3d.io.write_point_cloud(path, mesh)
+    o3d.io.write_triangle_mesh(path, mesh)
         
         
         

@@ -10,8 +10,8 @@ from cluster.clustering_functions import read_config, show_clustering_result, \
 
 from mesh_generation import generate_mesh, smooth_mesh
 
-save_results = False
-visualize    = True
+save_results = True
+visualize    = False
 
 if __name__== "__main__":
     
@@ -59,7 +59,7 @@ if __name__== "__main__":
         
     
     if save_results == True:
-        save_mesh('../../3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply', rad_cl)
+        save_point_cloud('../../3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply', rad_cl)
         
     # read files
     # TODO IO function with try statement
@@ -79,16 +79,17 @@ if __name__== "__main__":
     
     # Generate and visualize mesh for each cluster
     # TODO: Identify leaves and only generate mesh for them
-    for lab in range(len(clusters)):
+    for lab in range(len(clusters)-1):
         o3d.visualization.draw_geometries([clusters[lab]])
         clusters[lab].estimate_normals(
             search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
         mesh = generate_mesh(clusters[lab], True)
-        smooth = smooth_mesh(clusters[lab], True) 
+        # TODO: Find bug in smoothing
+        #smooth = smooth_mesh(clusters[lab], True) 
         
-        #if save_results == True:
+        if save_results == True:
             #TODO: find bug, probably in savestring
-            #save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , mesh)
+            save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , mesh)
     
 
     
