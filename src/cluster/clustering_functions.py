@@ -23,6 +23,7 @@ def get_XYZHSV_np(pointcloud):
     arr = np.asarray(pointcloud.points)
     carr = np.asarray(pointcloud.colors)
     carr = C.rgb_to_hsv(carr)
+    print("end get XY")
     return np.hstack([arr, carr])
 
 def create_voxel_grid(pointcloud, div):
@@ -48,16 +49,21 @@ def show_clustering_result(pointcloud, labels):
 
 # clustering
 def do_HDBSCAN(arr, config):
+    print("config: ", config)
     clusterer = hdbscan.HDBSCAN(min_cluster_size=config['min_cluster_size'],
                                 gen_min_span_tree=config['gen_min_span_tree'],
                                 cluster_selection_method=config['cluster_selection_method'],
                                 min_samples=config['min_samples'])
+    print("do hbscan")
     clusterer.fit(arr)
+    print("agter fit")
     return clusterer
 
 # main wrapper
 def cluster_pc_HDBSCAN(pointcloud, config):
+    print("start cluster")
     np_6D = get_XYZHSV_np(pointcloud)
+    print("mid clustere")
     hdbscan = do_HDBSCAN(np_6D, config['hdbscan'])
 
     labels = hdbscan.labels_

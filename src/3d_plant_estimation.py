@@ -1,6 +1,16 @@
 
 import open3d as o3d
 import numpy as np
+import os
+
+
+import metrics.april as ap
+import metrics.surfaceEstimation as su
+import metrics.normalEstimation as fn 
+import metrics.angleEstimation as an
+
+import matplotlib.pyplot as plt
+
 
 from utils import visualize_cloud, display_inlier_outlier, create_bounding_box, \
     save_point_cloud, save_mesh
@@ -14,8 +24,17 @@ save_results = True
 visualize    = False
 
 if __name__== "__main__":
+
+    pathRoot = "../../../"#'../../3D-data/
+    holeMeshName = "fused.ply"
+    croppedPcdRawName = 'cropped_pcd_raw_avocado.ply'
+    croppedPcdFilteredName = 'cropped_pcd_filtered_avocado_rad20_0p1.ply'
+    hdbscanPath = "./cluster/config/hdbscan_config.yaml"
+    colmapFolderName = "luca2"
+    apriltagSide = 16
+
     
-    pcd = o3d.io.read_point_cloud("../../3D-data/avocado_pcd.ply")
+    pcd = o3d.io.read_point_cloud(pathRoot + holeMeshName)
     
     if visualize == True:
         visualize_cloud(pcd)
@@ -40,7 +59,7 @@ if __name__== "__main__":
         visualize_cloud(cropped_pcd)
     
     if save_results == True:
-        save_point_cloud('../../3D-data/cropped_pcd_raw_avocado.ply', cropped_pcd)
+        save_point_cloud(pathRoot + croppedPcdRawName, cropped_pcd)
     
     
     #Downsample and remove outliers from cropped point cloud
@@ -59,38 +78,98 @@ if __name__== "__main__":
         
     
     if save_results == True:
-        save_point_cloud('../../3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply', rad_cl)
+        save_point_cloud(pathRoot + croppedPcdFilteredName, rad_cl)
         
     # read files
     # TODO IO function with try statement
-    config = read_config("./cluster/config/hdbscan_config.yaml")
+    config = read_config(hdbscanPath)
     path = config['path']
     pc = o3d.io.read_point_cloud(path)
     print(pc)
     if config['show_raw']:
         o3d.visualization.draw_geometries([pc])
 
-
+    print("here-1")
     labels = cluster_pc_HDBSCAN(pc, config)
+
+    print("here0")
     
     if visualize == True:
         show_clustering_result(pc, labels)
+    print("here1")
+
 
     clusters = extract_clusters(pc, labels, config)
     # Array of clusters indexed by labels
+
+    print("here2")
     
     # Generate and visualize mesh for each cluster
     # TODO: Identify leaves and only generate mesh for them
     for lab in range(len(clusters)-1):
         if visualize == True:
             o3d.visualization.draw_geometries([clusters[lab]])
+        print("here3")
         clusters[lab].estimate_normals(
             search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
+        print("here4")
         mesh = generate_mesh(clusters[lab], visualize = visualize)
+        print("here5")
         smooth = smooth_mesh(mesh, 10, visualize) 
-        
+        print("here6")
         if save_results == True:
-            save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , smooth)
+            save_mesh(pathRoot + '/organs/mesh_label'+str(lab)+'.ply' , smooth)
+
+    metrics = False
+    if metrics:
+
+        ##############################################
+        ################## SCALE #####################
+        ##############################################
+        colmapOutputPath = pathRoot + colmapFolderName
+        april = ap.April(colmapOutputPath)
+        scale = april.findScale(apriltagSide)
+
+        ##############################################
+        ################## HEIGHT ####################
+        ##############################################
+        meshPath = pathRoot + holeMeshName
+        normal = april.findNormal()
+        croppedMesh = pathRoot + croppedPcdFilteredName
+        heightnotScaled = fn.getHeight(croppedMesh, normal, april.a)
+        print("heigh not scaled: ", heightnotScaled)
+        heightScaled = heightnotScaled * scale
+        print("height is: ", heightScaled)
+
+        ##############################################
+        ########## Surface area eand angle############
+        ##############################################
+        for filename in os.listdir(pathRoot + "/organs/"):
+            #need a for here to go through all of the organs
+            organPath = pathRoot + "organs/" + filename
+            ##############################################
+            ##################   type    #################
+            ##############################################
+            type = -1
+            sums = su.findAreaOfTop(organPath)
+            #should only do this for leaves
+            arr = an.findAngle(organPath, normal)
+            leafSurface = sums * scale
+            print("leaf area is: ", leafSurface)
+        
+        plt.hist(arr, bins=30)
+        plt.show()
+
+        ##############################################
+        ##### put all meshes in one blender obj#######
+        ##############################################
+
+	    
+
+
+
+
+
     
 
     

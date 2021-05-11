@@ -1,6 +1,7 @@
 # parameters for hdbscan
-path: '/home/soley/3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply'
+#path: '/home/soley/3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply'
 #path: '/home/soley/3D-data/cropped_pcd_downsampled_and_filtered.ply'
+path: /home/elham/Desktop/fused.ply
 
 show_raw: False
 
