@@ -11,37 +11,42 @@ from cluster.clustering_functions import read_config, show_clustering_result, \
 from mesh_generation import generate_mesh, smooth_mesh
 
 save_results = True
-visualize    = False
+visualize    = True
+#plant = 'avocado'
+plant = 'luca2'
 
 if __name__== "__main__":
-    
-    pcd = o3d.io.read_point_cloud("../../3D-data/avocado_pcd.ply")
+    if plant == 'avocado':
+        pcd = o3d.io.read_point_cloud("../../3D-data/avocado_pcd.ply")
+    elif plant == 'luca2':
+        pcd = o3d.io.read_point_cloud("../../3D-data/textured_removed_leaf.ply")
     
     if visualize == True:
         visualize_cloud(pcd)
         
+    if plant == 'avocado': # avocado is not pre-cropped
     #Crop the point cloud to just the plant
-    cen = np.array([1.5,1,2])
-    ext = np.array([5,5,4])
-    rotations = np.array([0,30,0])
-    
-    bbox, aabbox = create_bounding_box(cen, ext, rotations)
-    
-    cropped_pcd = pcd.crop(bbox)
-    
-    if visualize == True:
-        o3d.visualization.draw_geometries([cropped_pcd, bbox ,aabbox])
-        o3d.visualization.draw_geometries([cropped_pcd])
+        cen = np.array([1.5,1,2])
+        ext = np.array([5,5,4])
+        rotations = np.array([0,30,0])
         
-    # Crop the point cloud and export results
-    cropped_pcd = pcd.crop(bbox)
+        bbox, aabbox = create_bounding_box(cen, ext, rotations)
+        
+        cropped_pcd = pcd.crop(bbox)
     
-    if visualize == True:
-        visualize_cloud(cropped_pcd)
+        if visualize == True:
+            o3d.visualization.draw_geometries([cropped_pcd, bbox ,aabbox])
+            o3d.visualization.draw_geometries([cropped_pcd])
+            
     
-    if save_results == True:
-        save_point_cloud('../../3D-data/cropped_pcd_raw_avocado.ply', cropped_pcd)
+        if visualize == True:
+            visualize_cloud(cropped_pcd)
+        
+        if save_results == True:
+            save_point_cloud('../../3D-data/cropped_pcd_raw_avocado.ply', cropped_pcd)
     
+    elif plant == 'luca2':
+        cropped_pcd = pcd
     
     #Downsample and remove outliers from cropped point cloud
     print("Downsample the point cloud with a voxel of 0.02")
@@ -51,7 +56,12 @@ if __name__== "__main__":
     
     
     print("Radius oulier removal")
-    rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1) #80 for leaf, 60 for newplant, 20 avo
+    if plant == 'avocado':
+        rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1)
+    elif plant == 'luca2':
+        rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=60, radius=0.1)
+        
+    
     print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
     if visualize == True:
         display_inlier_outlier(voxel_down_cropped_pcd, ind)
