@@ -11,7 +11,7 @@ from utils import visualize_cloud, visualize_mesh, display_inlier_outlier, Poiss
 
 print("Load a ply point cloud, print it, and render it")
 #pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
-pcd = o3d.io.read_point_cloud("../../3D-data/textured_removed_leaf.ply")
+pcd = o3d.io.read_point_cloud("../../3D-data/avocado_masked_cloud.ply")
 #mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 #mesh = o3d.io.read_triangle_mesh('../../3D-data/mesh_poi_stat_cl_30_1p5_dep12.ply')
 #print(pcd)
@@ -107,7 +107,7 @@ o3d.visualization.draw_geometries([voxel_down_cropped_pcd])
 
 #%%
 print("Radius oulier removal")
-rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=60, radius=0.1) #80 for leaf
+rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1) #80 for leaf
 print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
 display_inlier_outlier(voxel_down_cropped_pcd, ind)
 #visualize_cloud(rad_cl)
@@ -123,7 +123,8 @@ o3d.visualization.draw_geometries([stat_cl])
 
 #%%
 
-o3d.io.write_point_cloud('../../3D-data/luca2_filtered.ply', rad_cl)
+o3d.io.write_point_cloud('../../3D-data/avocado_filtered.ply', rad_cl)
+#o3d.io.write_point_cloud('../../3D-data/luca2_filtered.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_newplant.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_rad20_0p1_nopot.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_leaf_filtered_rad80_0p1.ply', rad_cl)
