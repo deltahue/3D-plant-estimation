@@ -19,7 +19,7 @@ if __name__== "__main__":
     if plant == 'avocado':
         pcd = o3d.io.read_point_cloud("../../3D-data/avocado_masked_cloud.ply")
     elif plant == 'luca2':
-        pcd = o3d.io.read_point_cloud("../../3D-data/textured_removed_leaf.ply")
+        pcd = o3d.io.read_point_cloud("../../3D-data/luca2_masked_cloud.ply")
     
     if visualize == True:
         visualize_cloud(pcd)
