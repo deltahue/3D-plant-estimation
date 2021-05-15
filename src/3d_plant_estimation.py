@@ -12,41 +12,19 @@ from mesh_generation import generate_mesh, smooth_mesh
 
 save_results = True
 visualize    = True
-#plant = 'avocado'
-plant = 'luca2'
+plant = 'avocado'
+#plant = 'luca2'
 
 if __name__== "__main__":
     if plant == 'avocado':
-        pcd = o3d.io.read_point_cloud("../../3D-data/avocado_pcd.ply")
+        pcd = o3d.io.read_point_cloud("../../3D-data/avocado_masked_cloud.ply")
     elif plant == 'luca2':
         pcd = o3d.io.read_point_cloud("../../3D-data/textured_removed_leaf.ply")
     
     if visualize == True:
         visualize_cloud(pcd)
         
-    if plant == 'avocado': # avocado is not pre-cropped
-    #Crop the point cloud to just the plant
-        cen = np.array([1.5,1,2])
-        ext = np.array([5,5,4])
-        rotations = np.array([0,30,0])
-        
-        bbox, aabbox = create_bounding_box(cen, ext, rotations)
-        
-        cropped_pcd = pcd.crop(bbox)
-    
-        if visualize == True:
-            o3d.visualization.draw_geometries([cropped_pcd, bbox ,aabbox])
-            o3d.visualization.draw_geometries([cropped_pcd])
-            
-    
-        if visualize == True:
-            visualize_cloud(cropped_pcd)
-        
-        if save_results == True:
-            save_point_cloud('../../3D-data/cropped_pcd_raw_avocado.ply', cropped_pcd)
-    
-    elif plant == 'luca2':
-        cropped_pcd = pcd
+    cropped_pcd = pcd
     
     #Downsample and remove outliers from cropped point cloud
     print("Downsample the point cloud with a voxel of 0.02")
