@@ -11,8 +11,8 @@ from utils import visualize_cloud, visualize_mesh, display_inlier_outlier, Poiss
 
 print("Load a ply point cloud, print it, and render it")
 #pcd = o3d.io.read_point_cloud("../../3D-data/sfm_fused.ply")
-pcd = o3d.io.read_point_cloud("../../3D-data/point_cloud_color.ply")
-mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
+pcd = o3d.io.read_point_cloud("../../3D-data/textured_removed_leaf.ply")
+#mesh = o3d.io.read_triangle_mesh('../../3D-data/meshed-poisson.ply')
 #mesh = o3d.io.read_triangle_mesh('../../3D-data/mesh_poi_stat_cl_30_1p5_dep12.ply')
 #print(pcd)
 #print(np.asarray(pcd.points))
@@ -80,7 +80,8 @@ visualize_cloud(cropped_pcd)
 #o3d.visualization.draw_geometries([cropped_pcd, bbox,aabb])
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_raw_smaller.ply', cropped_pcd)
 #o3d.io.write_point_cloud('../../3D-data/leaf_raw_pointcloud.ply', cropped_pcd)
-o3d.io.write_point_cloud('../../3D-data/new_raw_pointcloud.ply', cropped_pcd)
+#o3d.io.write_point_cloud('../../3D-data/new_raw_pointcloud.ply', cropped_pcd)
+o3d.io.write_point_cloud('../../3D-data/cropped_textured_removed_leaf.ply', cropped_pcd)
 
 
 #%% Crop the mesh
@@ -98,7 +99,7 @@ o3d.visualization.draw_geometries([cropped_mesh, bbox,aabb])
 # Export results
 #o3d.io.write_triangle_mesh('../../3D-data/cropped_mesh_smaller.ply', cropped_mesh)
 #%% Downsample and remove outliers from cropped point cloud
-
+cropped_pcd = pcd
 print("Downsample the point cloud with a voxel of 0.02")
 voxel_down_cropped_pcd = cropped_pcd.voxel_down_sample(voxel_size=0.02)
 o3d.visualization.draw_geometries([voxel_down_cropped_pcd])
@@ -122,7 +123,8 @@ o3d.visualization.draw_geometries([stat_cl])
 
 #%%
 
-o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_newplant.ply', rad_cl)
+o3d.io.write_point_cloud('../../3D-data/luca2_filtered.ply', rad_cl)
+#o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_newplant.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_filtered_rad20_0p1_nopot.ply', rad_cl)
 #o3d.io.write_point_cloud('../../3D-data/cropped_pcd_leaf_filtered_rad80_0p1.ply', rad_cl)
 
