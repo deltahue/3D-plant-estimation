@@ -1,16 +1,23 @@
 # parameters for hdbscan
 path: '/home/david/3D-vision/3D-plant-estimation/data/processed/pcd/cropped_pcd_filtered_avocado_rad20_0p1.ply'
+#path: '/home/david/3D-vision/3D-plant-estimation/data/processed/newplant/cropped_pcd_filtered_newplant.ply'
 #path: '/home/david/3D-vision/3D-plant-estimation/data/processed/pcd/cropped_pcd_downsampled_and_filtered.ply'
+
+# unfiltered paths
+#path: '/home/david/3D-vision/3D-plant-estimation/data/processed/pcd_no_filter/cropped_pcd_raw_avocado.ply'
+#path: '/home/david/3D-vision/3D-plant-estimation/data/processed/pcd_no_filter/cropped_pcd_raw_smaller_brazil.ply'
+#path: '/home/david/3D-vision/3D-plant-estimation/data/processed/pcd_no_filter/newplant_cropped_pointcloud.ply'
+
 
 show_raw: True
 
 downsample_div: 300
 
 hdbscan:
-  min_cluster_size: 300
+  min_cluster_size: 300 # minimal size of the clusters -> lower smaller clusters
   gen_min_span_tree: True
   cluster_selection_method: 'eom' # 'eom' or 'leaf'
-  min_samples: 5
-  hdbscan_debug: True
+  min_samples: 5 #provide a measure of how conservative you want you clustering to be. The larger the value of min_samples you provide, the more conservative the clustering – more points will be declared as noise
+  hdbscan_debug: False
 
 show_extracted_clusters: True
