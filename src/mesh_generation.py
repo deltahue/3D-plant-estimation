@@ -32,7 +32,7 @@ def generate_mesh(pcd, visualize = False):
         #visualize_mesh(density_mesh)
 
     print('remove low density vertices')
-    vertices_to_remove = densities < np.quantile(densities, 0.2)
+    vertices_to_remove = densities < np.quantile(densities, 0.25)
     poisson_mesh.remove_vertices_by_mask(vertices_to_remove)
     print(poisson_mesh)
 
@@ -53,7 +53,24 @@ def smooth_mesh(mesh, num_iter = 10, visualize = False):
 
     return mesh_taub
 
+def remove_islands(mesh, visualize = True):
+    print("Cluster connected triangles")
+    with o3d.utility.VerbosityContextManager(
+            o3d.utility.VerbosityLevel.Debug) as cm:
+        triangle_clusters, cluster_n_triangles, cluster_area = (
+            mesh.cluster_connected_triangles())
+    triangle_clusters = np.asarray(triangle_clusters)
+    cluster_n_triangles = np.asarray(cluster_n_triangles)
+    cluster_area = np.asarray(cluster_area)
 
+    mesh_0 = mesh
+    triangles_to_remove = cluster_n_triangles[triangle_clusters] < 100
+    mesh_0.remove_triangles_by_mask(triangles_to_remove)
+    
+    if visualize == True:
+        o3d.visualization.draw_geometries([mesh_0])
+
+    return mesh_0
 
 
 

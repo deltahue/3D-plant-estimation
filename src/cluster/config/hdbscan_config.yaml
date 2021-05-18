@@ -1,8 +1,8 @@
 # parameters for hdbscan
 #path: '/home/soley/3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply'
 
-path: '/home/soley/3D-data/avocado_filtered.ply'
-#path: '/home/soley/3D-data/luca2_filtered.ply'
+#path: '/home/soley/3D-data/avocado_filtered.ply'
+path: '/home/soley/3D-data/luca2_filtered.ply'
 #path: '/home/soley/3D-data/cropped_pcd_downsampled_and_filtered.ply'
 
 show_raw: True
@@ -10,9 +10,9 @@ show_raw: True
 downsample_div: 300
 
 hdbscan:
-  min_cluster_size: 300
+  min_cluster_size: 300 # was 300
   gen_min_span_tree: True
-  cluster_selection_method: 'eom' # 'eom' or 'leaf'
+  cluster_selection_method: 'leaf' # 'eom' or 'leaf'
   min_samples: 5
   hdbscan_debug: True
 
