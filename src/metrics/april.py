@@ -1,5 +1,5 @@
 import colmap.scripts.python.read_write_model as col
-from metrics.aprilDetector import findPointsOtherLib
+#from metrics.aprilDetector import findPointsOtherLib
 import cv2 as cv2
 from matplotlib import pyplot as plt
 import math
