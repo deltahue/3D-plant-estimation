@@ -72,5 +72,18 @@ def remove_islands(mesh, visualize = True):
 
     return mesh_0
 
+def remove_infs_nans(mesh):
+    '''
+    Remove all nans and infs from a generated mesh
+    '''
+    to_delete = []
+    vertices = np.asarray(mesh.vertices)
+    for i in range(len(vertices)):
+        if np.isnan(vertices[i,0]) == True or np.isinf(vertices[i,0] == True):
+            to_delete.append(i)
+    mesh.remove_vertices_by_index(to_delete)
+    
+    return mesh
+
 
 

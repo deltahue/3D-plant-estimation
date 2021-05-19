@@ -8,12 +8,12 @@ from utils import visualize_cloud, display_inlier_outlier, create_bounding_box, 
 from cluster.clustering_functions import read_config, show_clustering_result, \
     cluster_pc_HDBSCAN, extract_clusters
 
-from mesh_generation import generate_mesh, smooth_mesh, remove_islands
+from mesh_generation import generate_mesh, smooth_mesh, remove_islands, remove_infs_nans
 
 save_results = True
 visualize    = True
 #plant = 'avocado'
-plant = 'luca2'
+plant = 'avocado'
 
 if __name__== "__main__":
     if plant == 'avocado':
@@ -76,11 +76,16 @@ if __name__== "__main__":
             search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
         mesh = generate_mesh(clusters[lab], visualize = False)
         
+        vertices = np.asarray(mesh.vertices)
+        print(np.max(np.isnan(vertices)))
+        
         smooth = smooth_mesh(mesh, 10, visualize = False) 
-        smooth = remove_islands(smooth, visualize = visualize)
-
+        smoother = remove_islands(smooth, visualize = visualize)
+        
+        final_mesh = remove_infs_nans(smoother)
+        
         if save_results == True:
-            save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , smooth)
+            save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , final_mesh)
     
 
     
