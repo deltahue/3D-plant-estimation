@@ -4,10 +4,12 @@ import numpy as np
 import os
 
 
+
 import metrics.april as ap
 import metrics.surfaceEstimation as su
 import metrics.normalEstimation as fn 
 import metrics.angleEstimation as an
+import labeling.classifier as cl
 
 import matplotlib.pyplot as plt
 
@@ -142,8 +144,15 @@ if __name__== "__main__":
         print("height is: ", heightScaled)
 
         ##############################################
+        ##########        labeling        ############
+        ##############################################
+        classifier = cl.Classifier("./data/training")
+
+        ##############################################
         ########## Surface area eand angle############
         ##############################################
+        leafCnt = 0
+        stemCnt = 0
         for filename in os.listdir(pathRoot + "/organs/"):
             #need a for here to go through all of the organs
             organPath = pathRoot + "organs/" + filename
@@ -151,6 +160,14 @@ if __name__== "__main__":
             ##################   type    #################
             ##############################################
             type = -1
+            type = classifier.classify(organPath)
+            if(type == 1):
+                os.rename(organPath, pathRoot + "organs/" + "leaf" + leafCnt + ".ply")
+                leafCnt += 1
+            if(type == 0):
+                os.rename(organPath, pathRoot + "organs/" + "stem" + stemCnt + ".ply")
+                stemCnt += 1
+            
             sums = su.findAreaOfTop(organPath)
             #should only do this for leaves
             arr = an.findAngle(organPath, normal)
@@ -160,9 +177,8 @@ if __name__== "__main__":
         plt.hist(arr, bins=30)
         plt.show()
 
-        ##############################################
-        ##### put all meshes in one blender obj#######
-        ##############################################
+ 
+
 
 	    
 
