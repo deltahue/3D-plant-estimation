@@ -13,7 +13,7 @@ from mesh_generation import generate_mesh, smooth_mesh, remove_islands, remove_i
 save_results = True
 visualize    = True
 #plant = 'avocado'
-plant = 'avocado'
+plant = 'luca2'
 
 if __name__== "__main__":
     if plant == 'avocado':
@@ -68,7 +68,6 @@ if __name__== "__main__":
     # Array of clusters indexed by labels
     
     # Generate and visualize mesh for each cluster
-    # TODO: Identify leaves and only generate mesh for them
     for lab in range(len(clusters)-1):
         if visualize == True:
             o3d.visualization.draw_geometries([clusters[lab]])
@@ -83,6 +82,8 @@ if __name__== "__main__":
         smoother = remove_islands(smooth, visualize = visualize)
         
         final_mesh = remove_infs_nans(smoother)
+        hull, _ = final_mesh.compute_convex_hull()
+        o3d.visualization.draw_geometries([hull])
         
         if save_results == True:
             save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , final_mesh)
