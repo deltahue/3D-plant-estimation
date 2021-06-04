@@ -2,7 +2,7 @@
 import open3d as o3d
 import numpy as np
 
-from utils import visualize_cloud, display_inlier_outlier, create_bounding_box, \
+from utils import visualize_cloud, display_inlier_outlier, \
     save_point_cloud, save_mesh
     
 from cluster.clustering_functions import read_config, show_clustering_result, \
@@ -12,14 +12,24 @@ from mesh_generation import generate_mesh, smooth_mesh, remove_islands, remove_i
 
 save_results = True
 visualize    = True
-#plant = 'avocado'
-plant = 'luca2'
+plant = 'avocado'
+#plant = 'luca2'
+#plant = 'field'
+#plant = 'palm'
 
 if __name__== "__main__":
+    
+    assert (plant in ['luca2', 'avocado', 'field', 'palm'])
+    
     if plant == 'avocado':
-        pcd = o3d.io.read_point_cloud("../../3D-data/avocado_masked_cloud.ply")
+        pcd = o3d.io.read_point_cloud("/home/soley/3D-data/avocado_masked_cloud.ply")
+        #pcd = o3d.io.read_point_cloud("/home/soley/3D-data/cropped_avo6.ply")
     elif plant == 'luca2':
-        pcd = o3d.io.read_point_cloud("../../3D-data/luca2_masked_cloud.ply")
+        pcd = o3d.io.read_point_cloud("/home/soley/3D-data/luca2_masked_cloud.ply")
+    elif plant == 'field':
+        pcd = o3d.io.read_point_cloud("/home/soley/3D-data/cropped_field.ply")
+    elif plant == 'palm':
+        pcd = o3d.io.read_point_cloud("/home/soley/3D-data/cropped_palm.ply")
     
     if visualize == True:
         visualize_cloud(pcd)
@@ -37,17 +47,28 @@ if __name__== "__main__":
     if plant == 'avocado':
         rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1)
     elif plant == 'luca2':
-        rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=60, radius=0.1)
+        rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=50, radius=0.1)
+    elif plant == 'field':
+        rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=10, radius=0.5)
+    elif plant == 'palm':
+        rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=10, radius=0.1)
         
     
-    print("number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
+    print("Number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
     if visualize == True:
         display_inlier_outlier(voxel_down_cropped_pcd, ind)
         o3d.visualization.draw_geometries([rad_cl])
         
     
-    if save_results == True:
-        save_point_cloud('../../3D-data/cropped_pcd_filtered_avocado_rad20_0p1.ply', rad_cl)
+    if save_results == True and plant =='avocado':
+        save_point_cloud('/home/soley/3D-data/filtered_avocado.ply', rad_cl)
+        
+    elif save_results == True and plant == 'luca2':
+        save_point_cloud('/home/soley/3D-data/filtered_luca2.ply', rad_cl)
+    elif save_results == True and plant == 'field':
+        save_point_cloud('/home/soley/3D-data/filtered_field.ply', rad_cl)
+    elif save_results == True and plant == 'palm':
+        save_point_cloud('/home/soley/3D-data/filtered_palm.ply', rad_cl)
         
     # read files
     # TODO IO function with try statement
@@ -73,20 +94,20 @@ if __name__== "__main__":
             o3d.visualization.draw_geometries([clusters[lab]])
         clusters[lab].estimate_normals(
             search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
-        mesh = generate_mesh(clusters[lab], visualize = False)
+        mesh = generate_mesh(clusters[lab], visualize = visualize)
         
         vertices = np.asarray(mesh.vertices)
-        print(np.max(np.isnan(vertices)))
         
-        smooth = smooth_mesh(mesh, 10, visualize = False) 
-        smoother = remove_islands(smooth, visualize = visualize)
+        mesh = remove_islands(mesh, visualize == False)
+        smooth = smooth_mesh(mesh, 10, visualize = visualize) 
+        #smoother = remove_islands(smooth, visualize = visualize)
         
-        final_mesh = remove_infs_nans(smoother)
-        hull, _ = final_mesh.compute_convex_hull()
-        o3d.visualization.draw_geometries([hull])
+        final_mesh = remove_infs_nans(smooth)
+        #hull, _ = final_mesh.compute_convex_hull()
+        #o3d.visualization.draw_geometries([hull])
         
         if save_results == True:
-            save_mesh('../../3D-data/mesh_label'+str(lab)+'.ply' , final_mesh)
+            save_mesh('/home/soley/3D-data/mesh_label'+str(lab)+'.ply' , final_mesh)
     
 
     
