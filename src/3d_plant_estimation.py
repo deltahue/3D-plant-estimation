@@ -48,12 +48,7 @@ if __name__== "__main__":
     if visualize == True:
         o3d.visualization.draw_geometries([voxel_down_cropped_pcd])
     
-    print("Number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
-    if visualize == True:
-        display_inlier_outlier(voxel_down_cropped_pcd, ind)
-        o3d.visualization.draw_geometries([rad_cl])
-
-        
+   
     print("Radius oulier removal")
     rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
     #if plant == 'avocado':
@@ -65,7 +60,12 @@ if __name__== "__main__":
     #elif plant == 'palm':
     #    rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=10, radius=0.1)
       
-    
+    print("Number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
+    if visualize == True:
+        display_inlier_outlier(voxel_down_cropped_pcd, ind)
+        o3d.visualization.draw_geometries([rad_cl])
+
+     
     if save_results == True:
         save_point_cloud(pathRoot + croppedPcdFilteredName, rad_cl)
         
@@ -101,33 +101,36 @@ if __name__== "__main__":
         
         vertices = np.asarray(mesh.vertices)
         
-        mesh = remove_islands(mesh, visualize == False)
+        mesh = remove_islands(mesh, visualize = visualize)
         smooth = smooth_mesh(mesh, 10, visualize = visualize) 
         #smoother = remove_islands(smooth, visualize = visualize)
         
         final_mesh = remove_infs_nans(smooth)
+        if not os.path.exists(pathOrgans):
+            os.makedirs(pathOrgans)
+        
         if save_results == True:
             save_mesh(pathOrgans+ plantName + "/mesh_label"+str(lab)+'.ply' , smooth)
 
-    metrics = False
+    metrics = True
     if metrics:
 
         ##############################################
         ################## SCALE #####################
         ##############################################
-        colmapOutputPath = pathRoot + colmapFolderName
+        colmapOutputPath = pathRoot2 + colmapFolderName
         april = ap.April(colmapOutputPath)
         scale = april.findScale(apriltagSide)
 
         ##############################################
         ################## HEIGHT ####################
         ##############################################
-        meshPath = pathRoot + holeMeshName
         normal = april.findNormal()
         croppedMesh = pathRoot + croppedPcdFilteredName
         heightnotScaled = fn.getHeight(croppedMesh, normal, april.a)
         print("heigh not scaled: ", heightnotScaled)
         heightScaled = heightnotScaled * scale
+        print("scale: ", scale)
         print("height is: ", heightScaled)
 
         ##############################################
@@ -149,12 +152,14 @@ if __name__== "__main__":
             type = -1
             type = classifier.classify(organPath)
             if(type == 1):
-                os.rename(organPath, pathOrgans+ plantName + "/" + "leaf" + leafCnt + ".ply")
+                os.rename(organPath, pathOrgans+ plantName + "/" + "leaf" + str(leafCnt) + ".ply")
                 leafCnt += 1
             if(type == 0):
-                os.rename(organPath, pathOrgans+ plantName + "/" + "stem" + stemCnt + ".ply")
+                os.rename(organPath, pathOrgans+ plantName + "/" + "stem" + str(stemCnt) + ".ply")
                 stemCnt += 1
-            
+
+        for filename in os.listdir(pathOrgans+ plantName):
+            organPath = pathOrgans+ plantName + "/" + filename    
             sums = su.findAreaOfTop(organPath)
             #should only do this for leaves
             arr = an.findAngle(organPath, normal)

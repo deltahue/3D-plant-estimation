@@ -102,13 +102,13 @@ class Classifier:
             features = self.findFeatures2(filePathTraining + "stem/" + filename)
             self.X.append(np.array(features))
             self.Y.append(0)
-        print("X shape: ", np.array(X).shape)
+        print("X shape: ", np.array(self.X).shape)
         self.X = [np.array(self.X[i]) for i in range(len(self.X))]
         print("X shape: ", np.array(self.X).shape)
         #print("X shape: ", len(Xtemp))
-        #Xtemp = np.array(X)
+        Xtemp = np.array(self.X)
         print("shape: ", Xtemp.shape)
-        Ytemp = np.array(Y)
+        Ytemp = np.array(self.Y)
         print("X shape: ", Xtemp.shape)
         print("Y shape: ", Ytemp.shape)
         #print("Y shape: ", np.

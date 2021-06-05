@@ -13,15 +13,15 @@ def findAreaOfTop(meshPath):
 	vers = np.asarray(mesh.vertices)
 	mesh.compute_vertex_normals(normalized=True)
 	mesh.compute_triangle_normals(normalized=True)
-	print(mesh.has_triangle_normals())
-	print(mesh.has_vertex_normals())
+	#print(mesh.has_triangle_normals())
+	#print(mesh.has_vertex_normals())
 	tri_normals = np.asarray(mesh.triangle_normals)
-	print(tri_normals)
+	#print(tri_normals)
 	
 	#print(tris)
 	#print(vers)
 	#print("nors: ", nors)
-	print("here")
+	#print("here")
 	#sum = 0
 	#i = 0
 	#while(True):
@@ -34,9 +34,9 @@ def findAreaOfTop(meshPath):
 
         #sum += Vector3.Cross(a, b).magnitude;
 	summ = 0
-	print("len: ", len(tris))
+	#print("len: ", len(tris))
 	for i in range(len(tris)):
-		print("i: ", i)
+		#print("i: ", i)
 		tri = tris[i]
         #print(tri)
 		#print("tri:", tri)
@@ -51,9 +51,9 @@ def findAreaOfTop(meshPath):
 		area = norm(area, 2)
 		#print("area2: ", area)
 		summ += area
-	print("sum: ", summ)
+	#print("sum: ", summ)
 	listAdj = trimesh.face_adjacency(faces=tris)
-	print("adjacent faces: ", listAdj)
+	#print("adjacent faces: ", listAdj)
 	adjs = []
 	for i in range(len(tris)):
 		adjs.append([])

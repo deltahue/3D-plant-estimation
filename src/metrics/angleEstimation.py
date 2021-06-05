@@ -4,9 +4,9 @@ import open3d as o3d
 import numpy as np
 
 def findAngle(leafPath, normal):
-    print("hello")
+    #print("hello")
     mesh = o3d.io.read_triangle_mesh(leafPath)
-    print("here")
+    #print("here")
     P = np.asarray(mesh.vertices)
     #print("P: ", P)
     tris = np.asarray(mesh.triangles)
@@ -23,13 +23,13 @@ def findAngle(leafPath, normal):
         #A.B = |A|x|B|x cos(X)
         vecNor = tri_normals[i]
         cosAng = np.dot(vecNor, normal)/math.sqrt((np.dot(vecNor, vecNor) * np.dot(normal, normal)))
-        print("cos angle: ", cosAng)
+        #print("cos angle: ", cosAng)
         i += 1
         ang = math.degrees(math.acos(cosAng))
         arr.append(ang)
 
-    print("arr: ", arr)
-    print("length: ", len(arr))
+    #print("arr: ", arr)
+    #print("length: ", len(arr))
     
     #plt.hist(np.array(arr), bins=10)
 

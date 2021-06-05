@@ -16,22 +16,22 @@ import numpy as np
 class April:
 	def __init__(self, filePath):
 		self.filePath =  filePath
-		binPath = self.filePath + "/dense/sparse/images.bin" 
+		binPath = self.filePath + "/dense/sparse/0/images.bin" 
 		imagesPath = self.filePath + "/dense/images/"
-		point3Dpath = self.filePath + "/dense/sparse/points3D.bin" 
+		point3Dpath = self.filePath + "/dense/sparse/0/points3D.bin" 
 		images = col.read_images_binary(binPath)
 
 
 
-		print("length of images: ", len(images))
-		print(images[1].name)
+		#print("length of images: ", len(images))
+		#print(images[1].name)
 
 		closest3DId_A = -1
 		closest3DId_B = -1
 		closest3DId_C = -1
 		closest3DId_D = -1
 	
-		print("images length: ", len(images))
+		#print("images length: ", len(images))
 		at_detector = Detector(families='tag36h11', nthreads=1, quad_decimate=1.0, quad_sigma=0.0, refine_edges=1, decode_sharpening=0.25, debug=0)
 		for i in range(len(images)):
 	
@@ -71,12 +71,12 @@ class April:
 						distD = math.dist(point, D)
 						closest3DId_D = imageInteresting.point3D_ids[ind]
 					ind += 1
-		print("id: ",closest3DId_A," ", closest3DId_B, " ", closest3DId_C, " ", closest3DId_D)	
+		#print("id: ",closest3DId_A," ", closest3DId_B, " ", closest3DId_C, " ", closest3DId_D)	
 		Aid3 = closest3DId_A
 		Bid3 = closest3DId_B
 		Cid3 = closest3DId_C
 		Did3 = closest3DId_D
-		self.points3d = col.read_points3d_binary(point3Dpath)
+		self.points3d = col.read_points3D_binary(point3Dpath)
 
 		self.a = self.points3d[Aid3].xyz
 		self.b = self.points3d[Bid3].xyz
@@ -106,14 +106,14 @@ class April:
 		return scale
 		
 	def showCorners(self):
-		print("scale: ", scale)
+		#print("scale: ", scale)
 		
 		fig = plt.figure()
 		fig.suptitle('3D reconstructed', fontsize=16)
 		ax = fig.gca(projection='3d')
 
 		s=0
-		print("length of points3d",len(points3d))
+		#print("length of points3d",len(points3d))
 		xs = []
 		ys = []
 		zs = []

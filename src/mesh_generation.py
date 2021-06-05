@@ -77,13 +77,14 @@ def remove_islands(mesh, visualize = True):
     triangle_clusters = np.asarray(triangle_clusters)
     cluster_n_triangles = np.asarray(cluster_n_triangles)
     cluster_area = np.asarray(cluster_area)
-
+    print("before0")
     mesh_0 = mesh
     # Leave only the largest cluster in the mesh
     triangles_to_remove = cluster_n_triangles[triangle_clusters] < np.max(cluster_n_triangles)
     mesh_0.remove_triangles_by_mask(triangles_to_remove)
-    
+    print("before1")
     if visualize == True:
+        print("here")
         o3d.visualization.draw_geometries([mesh_0])
 
     return mesh_0
