@@ -1,0 +1,12 @@
+pathRoot = "../../data/avo_6/"#'../../3D-data/
+pathOrgans= "../../data/organs/
+pathOrganClass= "../../data/organTraining/
+#holeMeshName = "fused.ply"
+#croppedPcdRawName = 'cropped_pcd_raw_avocado.ply'
+croppedPcdFilteredName = 'dense/cropped_fused.ply'
+croppedMeshName = "dense/fused.ply"
+hdbscanPath = "./cluster/config/hdbscan_config.yaml"
+colmapFolderName = ""
+apriltagSide = 16
+nb_points=20
+radius=0.1
