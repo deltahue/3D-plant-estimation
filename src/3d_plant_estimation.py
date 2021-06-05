@@ -2,10 +2,10 @@
 import open3d as o3d
 import numpy as np
 
-from utils import visualize_cloud, display_inlier_outlier, \
+from utils import visualize_cloud, display_inlier_outlier,  create_bounding_box, \
     save_point_cloud, save_mesh
     
-from cluster.clustering_functions import read_config, show_clustering_result, \
+from cluster.clustering_functions import read_config, show_clustering_result,\
     cluster_pc_HDBSCAN, extract_clusters
 
 from mesh_generation import generate_mesh, smooth_mesh, remove_islands, remove_infs_nans
@@ -22,8 +22,8 @@ if __name__== "__main__":
     assert (plant in ['luca2', 'avocado', 'field', 'palm'])
     
     if plant == 'avocado':
-        pcd = o3d.io.read_point_cloud("/home/soley/3D-data/avocado_masked_cloud.ply")
-        #pcd = o3d.io.read_point_cloud("/home/soley/3D-data/cropped_avo6.ply")
+        #pcd = o3d.io.read_point_cloud("/home/soley/3D-data/avocado_masked_cloud.ply")
+        pcd = o3d.io.read_point_cloud("/home/soley/3D-data/cropped_avo6.ply")
     elif plant == 'luca2':
         pcd = o3d.io.read_point_cloud("/home/soley/3D-data/luca2_masked_cloud.ply")
     elif plant == 'field':
@@ -34,7 +34,20 @@ if __name__== "__main__":
     if visualize == True:
         visualize_cloud(pcd)
         
-    cropped_pcd = pcd
+    if plant == 'avocado':
+        #Crop the point cloud to just the plant
+        cen = np.array([1,1.5,1.5])
+        ext = np.array([3.5,2.5,2.5])
+        rotations = np.array([0,-20,0])
+        
+        bbox, aabbox = create_bounding_box(cen, ext, rotations)
+        
+        o3d.visualization.draw_geometries([pcd, bbox, aabbox])
+        cropped_pcd = pcd.crop(bbox)
+        o3d.visualization.draw_geometries([cropped_pcd])
+    
+    else:
+        cropped_pcd = pcd
     
     #Downsample and remove outliers from cropped point cloud
     print("Downsample the point cloud with a voxel of 0.02")
@@ -45,7 +58,7 @@ if __name__== "__main__":
     
     print("Radius oulier removal")
     if plant == 'avocado':
-        rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1)
+        rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=10, radius=0.1)
     elif plant == 'luca2':
         rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=50, radius=0.1)
     elif plant == 'field':
@@ -58,7 +71,7 @@ if __name__== "__main__":
     if visualize == True:
         display_inlier_outlier(voxel_down_cropped_pcd, ind)
         o3d.visualization.draw_geometries([rad_cl])
-        
+
     
     if save_results == True and plant =='avocado':
         save_point_cloud('/home/soley/3D-data/filtered_avocado.ply', rad_cl)
@@ -71,7 +84,6 @@ if __name__== "__main__":
         save_point_cloud('/home/soley/3D-data/filtered_palm.ply', rad_cl)
         
     # read files
-    # TODO IO function with try statement
     config = read_config("./cluster/config/hdbscan_config.yaml")
     path = config['path']
     pc = o3d.io.read_point_cloud(path)
@@ -94,17 +106,17 @@ if __name__== "__main__":
             o3d.visualization.draw_geometries([clusters[lab]])
         clusters[lab].estimate_normals(
             search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
-        mesh = generate_mesh(clusters[lab], visualize = visualize)
+        
+        if plant == 'avocado':
+            mesh = generate_mesh(clusters[lab], density_quantile=0.5, visualize = visualize)
+        elif plant == 'luca2':
+            mesh = generate_mesh(clusters[lab], density_quantile=0.25, visualize = visualize)
         
         vertices = np.asarray(mesh.vertices)
         
         mesh = remove_islands(mesh, visualize == False)
         smooth = smooth_mesh(mesh, 10, visualize = visualize) 
-        #smoother = remove_islands(smooth, visualize = visualize)
-        
         final_mesh = remove_infs_nans(smooth)
-        #hull, _ = final_mesh.compute_convex_hull()
-        #o3d.visualization.draw_geometries([hull])
         
         if save_results == True:
             save_mesh('/home/soley/3D-data/mesh_label'+str(lab)+'.ply' , final_mesh)

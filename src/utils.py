@@ -57,8 +57,6 @@ def display_inlier_outlier(cloud, ind):
     
     
 def create_bounding_box(cen, ext, rotations):
-    cen = np.array([1.5,1,2])
-    ext = np.array([5,5,4])
     rot_matrix = compute_rotation_matrix(rotations[0],rotations[1],rotations[2])
     
     bbox = o3d.geometry.OrientedBoundingBox(center = cen,

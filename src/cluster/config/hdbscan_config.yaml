@@ -10,7 +10,7 @@ show_raw: False
 downsample_div: 300
 
 hdbscan:
-  min_cluster_size: 300 # 300 for avo, luca and palm, needs to be smaller for field
+  min_cluster_size: 150 # 300 for luca (and palm), 150 for avo6, needs to be smaller for field
   gen_min_span_tree: True
   cluster_selection_method: 'leaf' # 'eom' or 'leaf'
   min_samples: 5

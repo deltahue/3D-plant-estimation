@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from utils import visualize_mesh
 
 # Generates a poisson reconstructed mesh for a given pointcloud pcd
-def generate_mesh(pcd, visualize = False):
+def generate_mesh(pcd, density_quantile = 0.25, visualize = False):
 
     
     with o3d.utility.VerbosityContextManager(
@@ -42,7 +42,7 @@ def generate_mesh(pcd, visualize = False):
     #    visualize_mesh(density_mesh)
 
     print('remove low density vertices')
-    vertices_to_remove = densities < np.quantile(densities, 0.25) #max(3.2, np.quantile(densities, 0.25))
+    vertices_to_remove = densities < np.quantile(densities, density_quantile)
     poisson_mesh.remove_vertices_by_mask(vertices_to_remove)
     print(poisson_mesh)
     print("length after removal: " + str(len(np.asarray(poisson_mesh.vertices))))
