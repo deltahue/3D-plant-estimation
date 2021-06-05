@@ -19,7 +19,9 @@ from utils import visualize_cloud, display_inlier_outlier, create_bounding_box, 
 from cluster.clustering_functions import read_config, show_clustering_result, \
     cluster_pc_HDBSCAN, extract_clusters
 
-from mesh_generation import generate_mesh, smooth_mesh
+
+from mesh_generation import generate_mesh, smooth_mesh, remove_islands, remove_infs_nans
+
 
 save_results = True
 visualize    = False
