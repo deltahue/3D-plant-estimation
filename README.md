@@ -1,6 +1,13 @@
 # 3D-plant-estimation
 
+## Running the project:
+1) take the data folder from the link below and replace the current data folder with it:
 
+https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
+
+2) cd src
+
+3) python3 ./3d_plant_estimation.py avo_6
 ## Git Conventions:
 - Stick to the git workflow as much as possible: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 - In order to merge a branch create a pull request for the others to review
