@@ -9,6 +9,7 @@ git submodule init
 git submodule update
 
 2) using anaconda create an environment using the finalEnv.yml file
+
 conda env create -f finalEnv.yml
 
 3) cd src
