@@ -1,16 +1,14 @@
-pathRoot = "../../../"#'../../3D-data/
-holeMeshName = "fused.ply"
-croppedPcdRawName = 'cropped_pcd_raw_avocado.ply'
-croppedPcdFilteredName = 'cropped_pcd_filtered_avocado_rad20_0p1.ply'
+pathRoot = "../data/luca2/"#'../../3D-data/
+pathRoot2 = "../data/luca2"
+pathOrgans= "../data/organs/"
+pathOrganClass= "../data/organTraining/"
+#holeMeshName = "fused.ply"
+#croppedPcdRawName = 'cropped_pcd_raw_avocado.ply'
+croppedPcdFilteredName = 'dense/cropped_luca2.ply'
+croppedMeshName = "dense/fused.ply"
 hdbscanPath = "./cluster/config/hdbscan_config.yaml"
-colmapFolderName = "luca2"
+colmapFolderName = ""
 apriltagSide = 16
-
-pathRoot = "../../data/"#'../../3D-data/
-holeMeshName = "fused.ply"
-croppedPcdRawName = 'cropped_pcd_raw_avocado.ply'
-croppedPcdFilteredName = 'cropped_pcd_filtered_avocado_rad20_0p1.ply'
-hdbscanPath = "./cluster/config/hdbscan_config.yaml"
-colmapFolderName = "luca2"
-apriltagSide = 16
+nb_points=50
+radius=0.1
 

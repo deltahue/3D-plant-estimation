@@ -31,7 +31,7 @@ if __name__== "__main__":
     args = sys.argv[1:]
     if(args[0] == "luca2"):
         from config_luca2 import *
-        plantName = "luca"
+        plantName = "luca2"
     if(args[0] == "avo_6"):
         from config_avo_6 import *
         plantName = "avocado"
