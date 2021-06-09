@@ -1,16 +1,24 @@
 # 3D-plant-estimation
 
 ## Running the project:
-1) using anaconda create an environment using the finalEnv.yml file
+1) 
+cd colmap
+
+git submodule init
+
+git submodule update
+
+2) using anaconda create an environment using the finalEnv.yml file
 conda env create -f finalEnv.yml
-
-2) take the data folder from the link below and replace the current data folder with it:
-
-https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
 
 3) cd src
 
-4) You can choose whether you wish to see the metrics of the avocado dataset or the luca2 dataset
+4) take the data folder from the link below and replace the current data folder with it:
+
+https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
+
+
+5) You can choose whether you wish to see the metrics of the avocado dataset or the luca2 dataset
 
 python3 ./3d_plant_estimation.py avo_6
 
