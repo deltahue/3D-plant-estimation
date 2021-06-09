@@ -1,13 +1,21 @@
 # 3D-plant-estimation
 
 ## Running the project:
-1) take the data folder from the link below and replace the current data folder with it:
+1) using anaconda create an environment using the finalEnv.yml file
+conda env create -f finalEnv.yml
+
+2) take the data folder from the link below and replace the current data folder with it:
 
 https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
 
-2) cd src
+3) cd src
 
-3) python3 ./3d_plant_estimation.py avo_6
+4) You can choose whether you wish to see the metrics of the avocado dataset or the luca2 dataset
+
+python3 ./3d_plant_estimation.py avo_6
+
+python3 ./3d_plant_estimation.py luca2
+
 ## Git Conventions:
 - Stick to the git workflow as much as possible: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 - In order to merge a branch create a pull request for the others to review
