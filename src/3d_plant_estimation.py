@@ -90,6 +90,9 @@ if __name__== "__main__":
 
     clusters = extract_clusters(pc, labels, config)
     # Array of clusters indexed by labels
+
+    for filename in os.listdir(pathOrgans+ plantName):
+        os.remove(pathOrgans+ plantName + "/" + filename)
     
     # Generate and visualize mesh for each cluster
     for lab in range(len(clusters)-1):
@@ -105,6 +108,7 @@ if __name__== "__main__":
         smooth = smooth_mesh(mesh, 10, visualize = visualize) 
         #smoother = remove_islands(smooth, visualize = visualize)
         
+        #removing the old meshes
         final_mesh = remove_infs_nans(smooth)
         if not os.path.exists(pathOrgans):
             os.makedirs(pathOrgans)
@@ -146,11 +150,13 @@ if __name__== "__main__":
         for filename in os.listdir(pathOrgans+ plantName):
             #need a for here to go through all of the organs
             organPath = pathOrgans+ plantName + "/" + filename
+            #print("organPath: ", organPath)
             ##############################################
             ##################   type    #################
             ##############################################
             type = -1
             type = classifier.classify(organPath)
+            #print("leaf number: ", leafCnt)
             if(type == 1):
                 os.rename(organPath, pathOrgans+ plantName + "/" + "leaf" + str(leafCnt) + ".ply")
                 leafCnt += 1
