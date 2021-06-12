@@ -2,7 +2,13 @@
 
 ## Running the project:
 1) 
-cd colmap
+
+start from this folder
+rename
+run colmap
+segmentation
+rerunn pcl
+
 
 git submodule init
 
