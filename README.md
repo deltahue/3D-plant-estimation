@@ -7,7 +7,7 @@ Smart farming technologies can revolutionize food pro-duction and help the farmi
     This project has been tested on Ubuntu 18.04 and Python 3.x.
 
 ##### Git
-    For the following installation instructions you will need git which you can set up with the following commands:
+For the following installation instructions you will need git which you can set up with the following commands:
 
     ```bash
     sudo apt-get install git
@@ -17,10 +17,10 @@ Smart farming technologies can revolutionize food pro-duction and help the farmi
     ```
     
 ##### Anaconda
-    For the following project you will need Anaconda which can be installed following [this tutorial](https://docs.anaconda.com/anaconda/install/linux/) :
+For the following project you will need Anaconda which can be installed following [this tutorial](https://docs.anaconda.com/anaconda/install/linux/).
 
 ##### COLMAP
-    For the following project you will need [COLMAP](https://colmap.github.io/index.html) which can be installed following [this tutorial](https://colmap.github.io/install.html).
+For the following project you will need [COLMAP](https://colmap.github.io/index.html) which can be installed following [this tutorial](https://colmap.github.io/install.html).
 
 ## Running the project:
 
@@ -43,22 +43,22 @@ Smart farming technologies can revolutionize food pro-duction and help the farmi
     │   └── images       <- Directory with all image (na naming convention is required)
     │       ├── img_1 
     :       ├── img_2 
-            :
-            :
-            └── img_i
+    :       :   im 
+    :       └── img_2 
+
 
 4. Run colmap:
     ```bash
         cd src
         ./3d_reconstruction.sh DATA_NAME
     ```
-    example:
+example:
     ```bash
         cd src
         ./3d_reconstruction.sh test
     ```
-    You can find precomputed data here:
-    https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
+You can find precomputed data here:
+https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
 
 5. You can choose whether you wish to see the metrics of the avocado dataset or the luca2 dataset
 

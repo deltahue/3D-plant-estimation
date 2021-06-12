@@ -141,6 +141,6 @@ dmypy.json
 *.jpg
 
 # exclude data from source control by default
-/data/*
-!/data/test/images/
+data/*
+!data/test/images
 
