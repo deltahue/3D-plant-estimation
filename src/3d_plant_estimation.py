@@ -3,6 +3,8 @@ import open3d as o3d
 import numpy as np
 import os
 import sys
+import copy
+import math
 
 import metrics.april as ap
 import metrics.surfaceEstimation as su
@@ -26,6 +28,7 @@ from mesh_generation import generate_mesh, smooth_mesh, remove_islands, remove_i
 save_results = True
 visualize    = False
 
+
 if __name__== "__main__":
 
     args = sys.argv[1:]
@@ -35,6 +38,12 @@ if __name__== "__main__":
     if(args[0] == "avo_6"):
         from config_avo_6 import *
         plantName = "avocado"
+    if(args[0] == "palm"):
+        from config_palm import *
+        plantName = "palm"
+    if(args[0] == "field"):
+        from config_field import *
+        plantName = "field"
         
     # Crop the point cloud and export results
     cropped_pcd = o3d.io.read_point_cloud(pathRoot + croppedMeshName)
@@ -91,10 +100,16 @@ if __name__== "__main__":
     clusters = extract_clusters(pc, labels, config)
     # Array of clusters indexed by labels
 
+    if not os.path.exists(pathOrgans):
+        os.makedirs(pathOrgans)
+    if not os.path.exists(pathOrgans+ plantName):
+        os.makedirs(pathOrgans+ plantName)
+
     for filename in os.listdir(pathOrgans+ plantName):
         os.remove(pathOrgans+ plantName + "/" + filename)
     
     # Generate and visualize mesh for each cluster
+    #
     for lab in range(len(clusters)-1):
         if visualize == True:
             o3d.visualization.draw_geometries([clusters[lab]])
@@ -123,13 +138,56 @@ if __name__== "__main__":
         ################## SCALE #####################
         ##############################################
         colmapOutputPath = pathRoot2 + colmapFolderName
-        april = ap.April(colmapOutputPath)
+        pcdFull = o3d.io.read_point_cloud(pathRoot + MeshOrigName)
+        april = ap.April(colmapOutputPath, plantName, pcdFull)
         scale = april.findScale(apriltagSide)
+        debug = False
+        if(debug):
+            #pcd = o3d.io.read_point_cloud(pathRoot + MeshOrigName)
+            pcd = o3d.io.read_point_cloud(pathRoot + croppedPcdFilteredName)
+            pcl = o3d.geometry.PointCloud()
+            points = np.array([april.a, april.b, april.c, april.d])
+            print("shape of points: ", points.shape)
+            pcl.points = o3d.utility.Vector3dVector(points)
+            pcd.paint_uniform_color([1, 0.706, 0])
+            pcl.paint_uniform_color([1, 0, 0])
+
+            all = o3d.geometry.PointCloud()
+            allPoints = np.concatenate((points, pcd.points), axis=0)
+            all.points = o3d.utility.Vector3dVector(allPoints)
+            o3d.io.write_point_cloud("allPoints.ply", all)
+
+            box = pcd.get_axis_aligned_bounding_box()
+            mesh_r = copy.deepcopy(pcd)
+            #print(x.shape)
+            # new axes:
+            nnx, nny, nnz = april.x, april.y, april.z #new_xaxis, new_yaxis, new_zaxis
+            print("self.x: ", april.x)
+            print("self.y: ", april.y)
+            print("self.z: ", april.z)
+            R = np.hstack((april.x, april.y, april.z))
+            R = R.reshape(3,-1)
+            print("R: ", R)
+            #R = mesh.get_rotation_matrix_from_xyz(np.array(x, y, z))
+            mesh_r.rotate(R, center=(0, 0, 0))
+            box = mesh_r.get_axis_aligned_bounding_box()
+            minPoint = box.get_min_bound()
+            maxPoint = box.get_max_bound()
+            distz = abs(maxPoint[2]-minPoint[2])
+
+            print("min: ", box.get_min_bound())
+            print("max: ", box.get_max_bound())
+            print("distz: ", distz)
+            o3d.visualization.draw_geometries([box, mesh_r])
+
+
+        
 
         ##############################################
         ################## HEIGHT ####################
         ##############################################
-        normal = april.findNormal()
+        normalMethod = "APRIL" #  "APRIL"
+        normal = april.findNormal(normalMethod)
         croppedMesh = pathRoot + croppedPcdFilteredName
         heightnotScaled = fn.getHeight(croppedMesh, normal, april.a)
         print("heigh not scaled: ", heightnotScaled)
@@ -163,17 +221,36 @@ if __name__== "__main__":
             if(type == 0):
                 os.rename(organPath, pathOrgans+ plantName + "/" + "stem" + str(stemCnt) + ".ply")
                 stemCnt += 1
+        
+        
+        length = len(os.listdir(pathOrgans+ plantName))
+        #fig, axs = plt.subplots(1, length, sharey=True, tight_layout=True)
+        
+        # example of somewhat too-large bin size
 
+        i = 0
         for filename in os.listdir(pathOrgans+ plantName):
             organPath = pathOrgans+ plantName + "/" + filename    
             sums = su.findAreaOfTop(organPath)
             #should only do this for leaves
             arr = an.findAngle(organPath, normal)
-            leafSurface = sums * scale
+            print("sums: ", sums)
+            leafSurface = sums * scale *scale
             print("leaf area is: ", leafSurface)
+
+           
+            #axs[i].hist(arr, bins=30)
+            #axs[i].set_xlabel('angle')
+            #axs[i].set_title('mesh name: ' + filename)
+          
         
-        plt.hist(arr, bins=30)
-        plt.show()
+            plt.hist(arr, bins=30)
+            plt.xlabel('angle')
+            plt.title('mesh name: ' + filename)
+            plt.show()
+            i+=1
+        #fig.suptitle('angle distribution for each of the 6 leaves', fontsize=16)
+        #plt.show()
 
  
 

@@ -91,26 +91,26 @@ class Classifier:
         self.X = []
         self.Y = []
         for filename in os.listdir(filePathTraining + "leaf/"):
-            print("LEAF")
+            print("training on LEAF")
             print(filename)
             features = self.findFeatures2(filePathTraining + "leaf/" + filename)
             self.X.append(np.array(features))
             self.Y.append(1)
         for filename in os.listdir(filePathTraining + "stem/"):
-            print("STEM")
+            print("training on STEM")
             print(filename)
             features = self.findFeatures2(filePathTraining + "stem/" + filename)
             self.X.append(np.array(features))
             self.Y.append(0)
-        print("X shape: ", np.array(self.X).shape)
+        #print("X shape: ", np.array(self.X).shape)
         self.X = [np.array(self.X[i]) for i in range(len(self.X))]
-        print("X shape: ", np.array(self.X).shape)
+        #print("X shape: ", np.array(self.X).shape)
         #print("X shape: ", len(Xtemp))
         Xtemp = np.array(self.X)
-        print("shape: ", Xtemp.shape)
+        #print("shape: ", Xtemp.shape)
         Ytemp = np.array(self.Y)
-        print("X shape: ", Xtemp.shape)
-        print("Y shape: ", Ytemp.shape)
+        #print("X shape: ", Xtemp.shape)
+        #print("Y shape: ", Ytemp.shape)
         #print("Y shape: ", np.
         self.clf = svm.SVC()
         Xtemp, Ytemp = self.unison_shuffling(Xtemp, Ytemp)
@@ -120,8 +120,8 @@ class Classifier:
         feat = self.findFeatures2(fileName)
         featnp = np.array(feat)
         featnp = featnp.reshape(1,-1)
-        print(featnp.shape)
-        print(self.clf.predict(featnp))
+        #print(featnp.shape)
+        #print(self.clf.predict(featnp))
         ans = self.clf.predict(featnp)
         return ans[0]
         

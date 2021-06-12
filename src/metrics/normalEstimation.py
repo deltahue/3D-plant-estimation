@@ -130,14 +130,14 @@ def getHeight(croppedMesh, normal, pointOnFloor):
     for p in P:
         vec = p - pointOnFloor
         projVec = np.dot(vec, normal)
-        print("projVec: ", projVec)
+        #print("projVec: ", projVec)
         #print("vec: ", vec)
         if(projVec > maxHeight):
             maxHeight = projVec 
             maxVec = vec
     origin = pointOnFloor
     maxHeight /= math.sqrt(np.dot(normal, normal))
-    drawNormal(croppedMesh,  (normal/math.sqrt(np.dot(normal, normal))) * maxHeight, origin)
+    #drawNormal(croppedMesh,  (normal/math.sqrt(np.dot(normal, normal))) * maxHeight, origin)
     return maxHeight
 
 def drawNormal(meshPath, normal,origin):

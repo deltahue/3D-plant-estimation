@@ -8,6 +8,7 @@ def findAreaOfTop(meshPath):
 	#mesh = o3d.io.read_triangle_mesh("./leafPointCloud.ply")
 	#mesh = o3d.io.read_triangle_mesh("./leaf.obj")
 	mesh = o3d.io.read_triangle_mesh(meshPath)
+	sumNew = mesh.get_surface_area()
 	#mesh = o3d.io.read_triangle_mesh("./bottle.obj")
 	tris = np.asarray(mesh.triangles)
 	vers = np.asarray(mesh.vertices)
@@ -79,8 +80,11 @@ def findAreaOfTop(meshPath):
 	#pcd.points = o3d.utility.Vector3dVector(np.asarray(mesh.vertices))
 	#pcd.estimate_normals()
 	#o3d.visualization.draw_geometries([pcd])
-	
-	return summ
+	#print("*******")
+	#print(summ)
+	#print(sumNew)
+	#print("*******")
+	return sumNew
 
 
 
