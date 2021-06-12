@@ -30,14 +30,22 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
         git checkout development
     ```
 
-2. Create a anaconda environemnt
+2. Install Colmap
+    ```bash
+    cd colmap
+    git submodule init
+    git submodule update
+    cd ..
+    ```
+
+3. Create a anaconda environemnt
     ```bash
         conda env create -f finalEnv.yml -n ENVNAME
         conda activate ENVNAME
     ```
 
-3. Import data into data folder. Use the structure:
-    
+4. Import data into data folder. Use the structure:
+```nohighlight
 ├── README.md        <- The top-level README for developers using this project.
 ├── data             <- Data directory
 │   └── images       <- Directory with all image (na naming convention is required)
@@ -45,9 +53,10 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
 :       ├── img_2 
 :       :   
 :       └── img_2 
+```
 
 
-4. Run colmap:
+5. Run colmap:
     ```bash
         cd src
         ./3d_reconstruction.sh DATA_NAME
@@ -60,7 +69,7 @@ example:
 You can find precomputed data here:
 https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
 
-5. You can choose whether you wish to see the metrics of the avocado dataset or the luca2 dataset
+6. You can choose whether you wish to see the metrics of the avocado dataset or the luca2 dataset
 
     python3 ./3d_plant_estimation.py avo_6
 
