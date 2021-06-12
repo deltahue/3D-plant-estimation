@@ -38,13 +38,13 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
 
 3. Import data into data folder. Use the structure:
     
-    ├── README.md        <- The top-level README for developers using this project.
-    ├── data             <- Data directory
-    │   └── images       <- Directory with all image (na naming convention is required)
-    │       ├── img_1 
-    :       ├── img_2 
-    :       :   im 
-    :       └── img_2 
+├── README.md        <- The top-level README for developers using this project.
+├── data             <- Data directory
+│   └── images       <- Directory with all image (na naming convention is required)
+│       ├── img_1 
+:       ├── img_2 
+:       :   
+:       └── img_2 
 
 
 4. Run colmap:
