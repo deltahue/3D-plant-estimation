@@ -49,8 +49,7 @@ if __name__== "__main__":
     parser.add_argument('-plantName', metavar='name', type=str, help='the name of the plant')
     parser.add_argument('-show', metavar='show', type=str2bool, default=False, help='show the results in the terminal')
     args = parser.parse_args()
-    #print(args.show)
-    #print(args.plantName)
+
 
     if(args.plantName == "luca2"):
         from config_luca2 import *
@@ -81,14 +80,7 @@ if __name__== "__main__":
    
     print("Radius oulier removal")
     rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
-    #if plant == 'avocado':
-    #    rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=20, radius=0.1)
-    #elif plant == 'luca2':
-    #    rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=50, radius=0.1)
-    #elif plant == 'field':
-    #    rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=10, radius=0.5)
-    #elif plant == 'palm':
-    #    rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=10, radius=0.1)
+
       
     print("Number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
     if visualize == True:
@@ -167,7 +159,6 @@ if __name__== "__main__":
             pcd = o3d.io.read_point_cloud(pathRoot + croppedPcdFilteredName)
             pcl = o3d.geometry.PointCloud()
             points = np.array([april.a, april.b, april.c, april.d])
-            #print("shape of points: ", points.shape)
             pcl.points = o3d.utility.Vector3dVector(points)
             pcd.paint_uniform_color([1, 0.706, 0])
             pcl.paint_uniform_color([1, 0, 0])
@@ -179,12 +170,10 @@ if __name__== "__main__":
 
             box = pcd.get_axis_aligned_bounding_box()
             mesh_r = copy.deepcopy(pcd)
-            #print(x.shape)
             # new axes:
             nnx, nny, nnz = april.x, april.y, april.z #new_xaxis, new_yaxis, new_zaxis
             R = np.hstack((april.x, april.y, april.z))
             R = R.reshape(3,-1)
-            #R = mesh.get_rotation_matrix_from_xyz(np.array(x, y, z))
             mesh_r.rotate(R, center=(0, 0, 0))
             box = mesh_r.get_axis_aligned_bounding_box()
             minPoint = box.get_min_bound()
@@ -233,13 +222,11 @@ if __name__== "__main__":
         for filename in os.listdir(pathOrgans+ plantName):
             #need a for here to go through all of the organs
             organPath = pathOrgans+ plantName + "/" + filename
-            #print("organPath: ", organPath)
             ##############################################
             ##################   type    #################
             ##############################################
             type = -1
             type = classifier.classify(organPath)
-            #print("leaf number: ", leafCnt)
             if(type == 1):
                 os.rename(organPath, pathOrgans+ plantName + "/" + "leaf" + str(leafCnt) + ".ply")
                 leafCnt += 1
@@ -255,7 +242,6 @@ if __name__== "__main__":
             sums = su.findAreaOfTop(organPath)
             #should only do this for leaves
             arr = an.findAngle(organPath, normal)
-            #print("sums: ", sums)
             leafSurface = sums * scale *scale
             a = "leaf area of "+ filename + " is: "+ str(leafSurface)
             if(args.show):
