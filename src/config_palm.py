@@ -10,6 +10,6 @@ MeshOrigName = "dense/orig_fused.ply"
 hdbscanPath = "./cluster/config/hdbscan_config.yaml"
 colmapFolderName = ""
 apriltagSide = 17.3
-nb_points=10
+nb_points=30
 radius=0.1
 
