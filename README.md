@@ -81,7 +81,7 @@ python3 ./3d_plant_estimation.py -plantName avo_6
 
 
 
-    python3 ./3d_plant_estimation.py luca2
+    python3 ./3d_plant_estimation.py -plantName luca2 -show False
 
 ## TODO:
 Licenses?
