@@ -145,5 +145,5 @@ dmypy.json
 data/*
 !data/test/
 data/test/*
-!data/test/images/
+# !data/test/images/
 
