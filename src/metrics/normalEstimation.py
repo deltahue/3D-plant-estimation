@@ -108,7 +108,6 @@ def get_arrow(origin=[0, 0, 0], end=None, vec=None):
 
 def findNormalPCA(croppedMesh):
 	mesh = o3d.io.read_triangle_mesh(croppedMesh)
-	print("here")
 	tris = np.asarray(mesh.triangles)
 	P = np.asarray(mesh.vertices)
 	print(P)
@@ -116,35 +115,25 @@ def findNormalPCA(croppedMesh):
 	print(mean)
 	print(P-mean)
 	cov = np.matmul(np.transpose(P-mean), (P-mean))
-	print("cov: ", cov)
 	w, v = LA.eig(np.array(cov))
-	print("w: ", w)
-	print("v: ", v)
 	return v
 
 def getHeight(croppedMesh, normal, pointOnFloor):
     mesh = o3d.io.read_triangle_mesh(croppedMesh)
-    print("here")
     P = np.asarray(mesh.vertices)
     maxHeight = 0
     for p in P:
         vec = p - pointOnFloor
         projVec = np.dot(vec, normal)
-        #print("projVec: ", projVec)
-        #print("vec: ", vec)
         if(projVec > maxHeight):
             maxHeight = projVec 
             maxVec = vec
     origin = pointOnFloor
     maxHeight /= math.sqrt(np.dot(normal, normal))
-    #drawNormal(croppedMesh,  (normal/math.sqrt(np.dot(normal, normal))) * maxHeight, origin)
     return maxHeight
 
 def drawNormal(meshPath, normal,origin):
-    #norVec = get_arrow(origin=[0,0,0], vec=normal)
-    #nor2Vec = get_arrow(origin=[0,1,0], vec=nor)
     norVec = get_arrow(origin=origin, vec=-1*normal)
-    #nor2Vec = get_arrow(origin=origin, vec=-1*nor)
     mesh = o3d.io.read_triangle_mesh(meshPath)
     o3d.visualization.draw_geometries([norVec, mesh])
 
