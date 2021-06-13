@@ -23,7 +23,6 @@ class Classifier:
 
     def getEigenValues(self, points):
         mean = points.mean(axis=0)
-        #print("mean")
         cov = np.matmul(np.transpose(points-mean), (points-mean))
         w,v = LA.eig(cov)
         w = np.sort(w)
@@ -41,7 +40,6 @@ class Classifier:
         while (dist < k) and queue:
             both = queue.pop(0)
             s = both[0]
-            #print("s: ", s)
             dist = both[1]
             neighs.append(s)
             for node in g.adj[s]:
@@ -60,17 +58,11 @@ class Classifier:
         pointsRand = [random.randrange(1, len(g.nodes), 1) for i in range(100)]
         allw = []
         for p in pointsRand:
-            #print("p: ", p)
             neighs = self.BFS(p, g, 5)
             neighborPoints = points[neighs]
             w = self.getEigenValues(points = neighborPoints)
             allw.append(w)
-            #print("this is the point: ", p)
-            #print("w: ", w)
-            #print("----------------")
-        #print("------------------------------------------------")
         cov = np.matmul(np.transpose(allw), allw)
-        #print("cov: ", cov)
         covDiag = cov.diagonal() 
         sum = covDiag[0] + covDiag[1] + covDiag[2]
         features = [covDiag[0]/sum, covDiag[1]/sum, covDiag[2]/sum]
@@ -81,7 +73,6 @@ class Classifier:
         points = np.asarray(mesho3.vertices)
         mean = points.mean(axis=0)
         cov = np.matmul(np.transpose(points-mean), points-mean)
-        #print("cov: ", cov)
         w,v = LA.eig(cov)
         w = np.sort(w)
         feature = [w[2]/(w[0] + w[1] + w[2])]
@@ -100,16 +91,9 @@ class Classifier:
             features = self.findFeatures2(filePathTraining + "stem/" + filename)
             self.X.append(np.array(features))
             self.Y.append(0)
-        #print("X shape: ", np.array(self.X).shape)
         self.X = [np.array(self.X[i]) for i in range(len(self.X))]
-        #print("X shape: ", np.array(self.X).shape)
-        #print("X shape: ", len(Xtemp))
         Xtemp = np.array(self.X)
-        #print("shape: ", Xtemp.shape)
         Ytemp = np.array(self.Y)
-        #print("X shape: ", Xtemp.shape)
-        #print("Y shape: ", Ytemp.shape)
-        #print("Y shape: ", np.
         self.clf = svm.SVC()
         Xtemp, Ytemp = self.unison_shuffling(Xtemp, Ytemp)
         self.clf.fit(Xtemp, Ytemp)
