@@ -1,20 +1,11 @@
-# from .row_detection import RowDetector
+import os
 from argparse import ArgumentParser
 import struct
-# import math
-# import pylab as plt
 import numpy as np
-# import pandas as pd
-# import time
+
 import cv2
-import os
 from tqdm import tqdm
 
-# import sys
-# sys.path.append(os.path.abspath(os.path.join('..', '..')))
-# sys.path.append('..')
-
-# import matplotlib.pyplot as plt
 
 
 def read_array(path):
