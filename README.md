@@ -69,13 +69,15 @@ example:
 You can find precomputed data here:
 https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
 
-python3 ./3d_plant_estimation.py luca2
+the show option determines whether the results are written to the terminal or written to the results folder
 
-python3 ./3d_plant_estimation.py palm
+python3 ./3d_plant_estimation.py -plantName luca2 -show True
 
-python3 ./3d_plant_estimation.py field
+python3 ./3d_plant_estimation.py -plantName palm
 
-python3 ./3d_plant_estimation.py avo_6
+python3 ./3d_plant_estimation.py -plantName field
+
+python3 ./3d_plant_estimation.py -plantName avo_6
 
 
 

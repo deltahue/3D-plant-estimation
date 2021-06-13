@@ -4,7 +4,6 @@ from numpy.linalg import norm
 import trimesh.graph as trimesh
 
 def findAreaOfTop(meshPath):
-	print("Testing mesh in open3d ...")
 	#mesh = o3d.io.read_triangle_mesh("./leafPointCloud.ply")
 	#mesh = o3d.io.read_triangle_mesh("./leaf.obj")
 	mesh = o3d.io.read_triangle_mesh(meshPath)

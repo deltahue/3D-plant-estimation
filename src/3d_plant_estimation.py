@@ -14,6 +14,8 @@ import labeling.classifier as cl
 
 import matplotlib.pyplot as plt
 
+import argparse
+
 
 from utils import visualize_cloud, display_inlier_outlier, create_bounding_box, \
     save_point_cloud, save_mesh
@@ -28,22 +30,41 @@ from mesh_generation import generate_mesh, smooth_mesh, remove_islands, remove_i
 save_results = True
 visualize    = False
 
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__== "__main__":
 
     args = sys.argv[1:]
-    if(args[0] == "luca2"):
+    
+
+    parser = argparse.ArgumentParser(description='name of plant')
+    parser.add_argument('-plantName', metavar='name', type=str, help='the name of the plant')
+    parser.add_argument('-show', metavar='show', type=str2bool, default=False, help='show the results in the terminal')
+    args = parser.parse_args()
+    #print(args.show)
+    #print(args.plantName)
+
+    if(args.plantName == "luca2"):
         from config_luca2 import *
         plantName = "luca2"
-    if(args[0] == "avo_6"):
+    elif(args.plantName == "avo_6"):
         from config_avo_6 import *
         plantName = "avocado"
-    if(args[0] == "palm"):
+    elif(args.plantName == "palm"):
         from config_palm import *
         plantName = "palm"
-    if(args[0] == "field"):
+    elif(args.plantName == "field"):
         from config_field import *
         plantName = "field"
+    
         
     # Crop the point cloud and export results
     cropped_pcd = o3d.io.read_point_cloud(pathRoot + croppedMeshName)
@@ -83,18 +104,15 @@ if __name__== "__main__":
     config = read_config(hdbscanPath)
     path = pathRoot + croppedPcdFilteredName #config['path']
     pc = o3d.io.read_point_cloud(path)
-    print(pc)
+
     if config['show_raw']:
         o3d.visualization.draw_geometries([pc])
 
-    print("here-1")
+    print("finding the labels")
     labels = cluster_pc_HDBSCAN(pc, config)
 
-    print("here0")
-    
     if visualize == True:
         show_clustering_result(pc, labels)
-    print("here1")
 
 
     clusters = extract_clusters(pc, labels, config)
@@ -133,13 +151,15 @@ if __name__== "__main__":
 
     metrics = True
     if metrics:
-
+        if not os.path.exists(pathRoot + "results"):
+            os.makedirs(pathRoot + "results")
+        file1 = open(pathRoot + "results" + "/res.txt","a")
         ##############################################
         ################## SCALE #####################
         ##############################################
         colmapOutputPath = pathRoot2 + colmapFolderName
         pcdFull = o3d.io.read_point_cloud(pathRoot + MeshOrigName)
-        april = ap.April(colmapOutputPath, plantName, pcdFull)
+        april = ap.April(colmapOutputPath, plantName, pcdFull, args.show, file1)
         scale = april.findScale(apriltagSide)
         debug = False
         if(debug):
@@ -147,7 +167,7 @@ if __name__== "__main__":
             pcd = o3d.io.read_point_cloud(pathRoot + croppedPcdFilteredName)
             pcl = o3d.geometry.PointCloud()
             points = np.array([april.a, april.b, april.c, april.d])
-            print("shape of points: ", points.shape)
+            #print("shape of points: ", points.shape)
             pcl.points = o3d.utility.Vector3dVector(points)
             pcd.paint_uniform_color([1, 0.706, 0])
             pcl.paint_uniform_color([1, 0, 0])
@@ -162,12 +182,8 @@ if __name__== "__main__":
             #print(x.shape)
             # new axes:
             nnx, nny, nnz = april.x, april.y, april.z #new_xaxis, new_yaxis, new_zaxis
-            print("self.x: ", april.x)
-            print("self.y: ", april.y)
-            print("self.z: ", april.z)
             R = np.hstack((april.x, april.y, april.z))
             R = R.reshape(3,-1)
-            print("R: ", R)
             #R = mesh.get_rotation_matrix_from_xyz(np.array(x, y, z))
             mesh_r.rotate(R, center=(0, 0, 0))
             box = mesh_r.get_axis_aligned_bounding_box()
@@ -190,10 +206,19 @@ if __name__== "__main__":
         normal = april.findNormal(normalMethod)
         croppedMesh = pathRoot + croppedPcdFilteredName
         heightnotScaled = fn.getHeight(croppedMesh, normal, april.a)
-        print("heigh not scaled: ", heightnotScaled)
         heightScaled = heightnotScaled * scale
-        print("scale: ", scale)
-        print("height is: ", heightScaled)
+
+        a = "height not scaled: "+ str(heightnotScaled)
+        b = "scale: "+ str(scale)
+        c = "estimated height is: "+ str(heightScaled)
+        if(args.show):
+            print(a)
+            print(b)
+            print(c)
+        else:
+            file1.write(a + "\n")
+            file1.write(b + "\n")
+            file1.write(c + "\n")
 
         ##############################################
         ##########        labeling        ############
@@ -224,33 +249,29 @@ if __name__== "__main__":
         
         
         length = len(os.listdir(pathOrgans+ plantName))
-        #fig, axs = plt.subplots(1, length, sharey=True, tight_layout=True)
-        
-        # example of somewhat too-large bin size
 
-        i = 0
         for filename in os.listdir(pathOrgans+ plantName):
             organPath = pathOrgans+ plantName + "/" + filename    
             sums = su.findAreaOfTop(organPath)
             #should only do this for leaves
             arr = an.findAngle(organPath, normal)
-            print("sums: ", sums)
+            #print("sums: ", sums)
             leafSurface = sums * scale *scale
-            print("leaf area is: ", leafSurface)
-
-           
-            #axs[i].hist(arr, bins=30)
-            #axs[i].set_xlabel('angle')
-            #axs[i].set_title('mesh name: ' + filename)
-          
-        
+            a = "leaf area of "+ filename + " is: "+ str(leafSurface)
+            if(args.show):
+                print(a)
+            else:
+                file1.write(a + "\n")
+            plt.clf()
             plt.hist(arr, bins=30)
             plt.xlabel('angle')
             plt.title('mesh name: ' + filename)
-            plt.show()
-            i+=1
-        #fig.suptitle('angle distribution for each of the 6 leaves', fontsize=16)
-        #plt.show()
+
+            if(args.show):
+                plt.show()
+            else:
+                plt.savefig(pathRoot + "results/" +"histo_" +filename +'.png')
+
 
  
 

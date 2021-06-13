@@ -16,7 +16,7 @@ import os
 #d = (0,0,0)
 
 class April:
-	def __init__(self, filePath, _plantName, _pcd):
+	def __init__(self, filePath, _plantName, _pcd, _show, _file1):
 		self.filePath =  filePath
 		if os.path.exists(self.filePath + "/dense/sparse/0/images.bin" ):
 			binPath = self.filePath + "/dense/sparse/0/images.bin" 
@@ -29,6 +29,8 @@ class April:
 		images = col.read_images_binary(binPath)
 		self.plantName = _plantName
 		self.pcd = _pcd
+		self.show = _show
+		self.file1 = _file1
 
 
 		#print("length of images: ", len(images))
@@ -71,10 +73,13 @@ class April:
 				E = r.center
 				tagFamily = r.tag_family.decode("utf-8")
 				tagId = r.tag_id
-			print("flag: ", flag)
+			if(flag):
+				print("corners of image ", images[i+1].name, " were detected")
+			else:
+				print("NO corners for image ", images[i+1].name, " were detected")
 			if(flag):
 				ind = 0
-				print("imageInteresting.xys: ", imageInteresting.xys)
+				#print("imageInteresting.xys: ", imageInteresting.xys)
 				for point in imageInteresting.xys:
 					#print("point:" , point)
 					#print("dist: ", math.dist(point, A) )
@@ -94,7 +99,21 @@ class April:
 						distE = math.dist(point, E)
 						closest3DId_E = imageInteresting.point3D_ids[ind]
 					ind += 1
-		print("distA: ", distA, "distB: ", distB, "distC: ", distC, "distD: ", distD)
+		a = "closest 2d point having matching 3D point is "+ str(distA) + " away from april from first apriltag corner"
+		b = "closest 2d point having matching 3D point is "+ str(distB) + " away from april from second apriltag corner"
+		c = "closest 2d point having matching 3D point is "+ str(distC) + " away from april from third apriltag corner"
+		d = "closest 2d point having matching 3D point is "+ str(distD) + " away from april from fourth apriltag corner"
+		if(self.show):
+			print(a)
+			print(b)
+			print(c)
+			print(d)
+			#print("distA: ", distA, "distB: ", distB, "distC: ", distC, "distD: ", distD)
+		else:
+			self.file1.write(a+ "\n")
+			self.file1.write(b+ "\n")
+			self.file1.write(c+ "\n")
+			self.file1.write(d+ "\n")
 		#print("id: ",closest3DId_A," ", closest3DId_B, " ", closest3DId_C, " ", closest3DId_D)	
 		Aid3 = closest3DId_A
 		Bid3 = closest3DId_B
@@ -110,18 +129,18 @@ class April:
 		self.d = self.points3d[Did3].xyz
 		self.e = self.points3d[Eid3].xyz
 		
-		print("point3d for A: ", self.a)
-		print("point3d for B: ", self.b)
-		print("point3d for C: ", self.c) 
-		print("point3d for D: ", self.d)
-		print("point3d for E: ", self.e)
+		#print("point3d for A: ", self.a)
+		#print("point3d for B: ", self.b)
+		#print("point3d for C: ", self.c) 
+		#print("point3d for D: ", self.d)
+		#print("point3d for E: ", self.e)
 
 		
   	
 	def findNormal(self, normalMethod):
 		if(normalMethod == "APRIL"):
 			print(self.a)
-			print("shape: ", self.a.shape)
+			#print("shape: ", self.a.shape)
 			return np.cross(self.a - self.b, self.a - self.c)
 		elif(normalMethod == "RANSAC"):
 			aa, bb, dd = ran.findPlane(self.pcd)
@@ -155,22 +174,40 @@ class April:
 		sideDist2 = math.dist(self.b, self.c)
 		sideDist3 = math.dist(self.c, self.d)
 		sideDist4 = math.dist(self.d, self.a)
-		print("length calculated for side 1: ", sideDist1)
-		print("length calculated for side 2: ", sideDist2)
-		print("length calculated for side 3: ", sideDist3)
-		print("length calculated for side 4: ", sideDist4)
+
+		a1 = "--------------------------------------------------------------------"
+		a = "non scaled length calculated for first side of apriltag: "+ str(sideDist1)
+		b = "non scaled length calculated for second side of apriltag: "+ str(sideDist2)
+		c = "non scaled length calculated for third side of apriltag: "+ str(sideDist3)
+		d = "non scaled length calculated for fourth side of apriltag: "+ str(sideDist4)
+		d1 = "--------------------------------------------------------------------"
+		if(self.show):
+			print(a1)
+			print(a)
+			print(b)
+			print(c)
+			print(d)
+			print(d1)
+		else:
+			self.file1.write(a1+ "\n")
+			self.file1.write(a+ "\n")
+			self.file1.write(b+ "\n")
+			self.file1.write(c+ "\n")
+			self.file1.write(d+ "\n")
+			self.file1.write(d1+ "\n")
+
 		diag1 = math.dist(self.a, self.e)
 		diag2 = math.dist(self.b, self.e)
 		diag3 = math.dist(self.c, self.e)
 		diag4 = math.dist(self.d, self.e)
-		print("diag1: ", diag1)
-		print("diag2: ", diag2)
-		print("diag3: ", diag3)
-		print("diag4: ", diag4)
+		#print("diag1: ", diag1)
+		#print("diag2: ", diag2)
+		#print("diag3: ", diag3)
+		#print("diag4: ", diag4)
 		
 		av = (sideDist1 + sideDist2 + sideDist3 + sideDist4) / 4
 		scale =  squareSideLength / av
-		print("side: ",  ((diag1 + diag2 + diag3 + diag4) / 4)  * scale) 
+		#print("side: ",  ((diag1 + diag2 + diag3 + diag4) / 4)  * scale) 
 
 		self.x = np.array(self.a - self.b)
 		self.y = np.array(self.a - self.d)	

@@ -91,14 +91,12 @@ class Classifier:
         self.X = []
         self.Y = []
         for filename in os.listdir(filePathTraining + "leaf/"):
-            print("training on LEAF")
-            print(filename)
+            print("training on LEAF "+filename)
             features = self.findFeatures2(filePathTraining + "leaf/" + filename)
             self.X.append(np.array(features))
             self.Y.append(1)
         for filename in os.listdir(filePathTraining + "stem/"):
-            print("training on STEM")
-            print(filename)
+            print("training on STEM "+filename)
             features = self.findFeatures2(filePathTraining + "stem/" + filename)
             self.X.append(np.array(features))
             self.Y.append(0)
