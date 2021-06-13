@@ -69,9 +69,15 @@ example:
 You can find precomputed data here:
 https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
 
-6. You can choose whether you wish to see the metrics of the avocado dataset or the luca2 dataset
+python3 ./3d_plant_estimation.py luca2
 
-    python3 ./3d_plant_estimation.py avo_6
+python3 ./3d_plant_estimation.py palm
+
+python3 ./3d_plant_estimation.py field
+
+python3 ./3d_plant_estimation.py avo_6
+
+
 
     python3 ./3d_plant_estimation.py luca2
 
