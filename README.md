@@ -1,27 +1,73 @@
 # 3D-plant-estimation
 
+Smart farming technologies can revolutionize food pro-duction and help the farming industry answer the world’sgrowing demand for food in a sustainable way. 3D visionmethods are a promising tool which can be used for smartfarming applications. In this project, an end-to-end pipelinewas developed, which uses 3D reconstruction and machinelearning methods to extract three crop traits from a plants:the plant height, leaf area and leaf angle distribution. Theresulting method is able to estimate height within an errorof1cmfor the datasets used.
+
+## Prerequisites
+
+    This project has been tested on Ubuntu 18.04 and Python 3.x.
+
+##### Git
+For the following installation instructions you will need git which you can set up with the following commands:
+
+    ```bash
+    sudo apt-get install git
+    git config --global user.name "Your Name Here"
+    git config --global user.email "Same Email as used for github"
+    git config --global color.ui true
+    ```
+    
+##### Anaconda
+For the following project you will need Anaconda which can be installed following [this tutorial](https://docs.anaconda.com/anaconda/install/linux/).
+
+##### COLMAP
+For the following project you will need [COLMAP](https://colmap.github.io/index.html) which can be installed following [this tutorial](https://colmap.github.io/install.html).
+
 ## Running the project:
-1) 
-cd colmap
 
-git submodule init
+1. Clone the repository:
+    ```bash
+        git clone git@github.com:deltahue/3D-plant-estimation.git
+        git checkout development
+    ```
 
-git submodule update
+2. Install Colmap
+    ```bash
+    cd colmap
+    git submodule init
+    git submodule update
+    cd ..
+    ```
 
-cd ..
+3. Create a anaconda environemnt
+    ```bash
+        conda env create -f finalEnv.yml -n ENVNAME
+        conda activate ENVNAME
+    ```
 
-2) using anaconda create an environment using the finalEnv.yml file
+4. Import data into data folder. Use the structure:
+```nohighlight
+├── README.md        <- The top-level README for developers using this project.
+├── data             <- Data directory
+│   └── images       <- Directory with all image (na naming convention is required)
+│       ├── img_1 
+:       ├── img_2 
+:       :   
+:       └── img_2 
+```
 
-conda env create -f finalEnv.yml
 
-3) cd src
-
-4) take the data folder from the link below and replace the current data folder with it:
-
+5. Run colmap:
+    ```bash
+        cd src
+        ./3d_reconstruction.sh DATA_NAME
+    ```
+example:
+    ```bash
+        cd src
+        ./3d_reconstruction.sh test
+    ```
+You can find precomputed data here:
 https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
-
-
-5) You can choose whether you wish to see the metrics of the avocado dataset or the luca2 dataset
 
 python3 ./3d_plant_estimation.py luca2
 
@@ -33,44 +79,8 @@ python3 ./3d_plant_estimation.py avo_6
 
 
 
-## Git Conventions:
-- Stick to the git workflow as much as possible: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
-- In order to merge a branch create a pull request for the others to review
-- branch naming convention: /nethz/feature_name
+    python3 ./3d_plant_estimation.py luca2
 
-## Repository Structure
-```nohighlight
-├── README.md          <- The top-level README for developers using this project.
-├── data
-│   ├── external       <- Data from third party sources.
-│   ├── interim        <- Intermediate data that has been transformed.
-│   ├── processed      <- The final, canonical data sets for modeling. (for example processed point clouds)
-│   └── raw            <- The original, immutable data dump. (images, raw datasets)
-│
-├── models             <- Trained and serialized models, model predictions, or model summaries
-│
-├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-│                         the creator's initials, and a short `-` delimited description, e.g.
-│                         `1.0-jqp-initial-data-exploration`.
-│
-│
-├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-│                         generated with `pip freeze > requirements.txt`
-│
-└── src                <- Source code for use in this project.
-    ├── __init__.py    <- Makes src a Python module
-    │
-    ├── data           <- Scripts to download or generate data
-    │   └── make_dataset.py
-    │
-    ├── features       <- Scripts to turn raw data into features for modeling
-    │   └── build_features.py
-    │
-    ├── models         <- Scripts to train models and then use trained models to make
-    │   │                 predictions
-    │   ├── predict_model.py
-    │   └── train_model.py
-    │
-    └── visualization  <- Scripts to create exploratory and results oriented visualizations
-        └── visualize.py
-```
+## TODO:
+Licenses?
+Contribute?
