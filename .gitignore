@@ -143,7 +143,7 @@ dmypy.json
 # exclude data from source control by default
 !data/
 data/*
-!data/test/
-data/test/*
+# !data/test/
+# data/test/*
 # !data/test/images/
 
