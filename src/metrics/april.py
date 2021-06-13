@@ -31,10 +31,6 @@ class April:
 		self.pcd = _pcd
 		self.show = _show
 		self.file1 = _file1
-
-
-		#print("length of images: ", len(images))
-		#print(images[1].name)
 		self.x = None
 		self.y = None
 		self.z = None
@@ -44,8 +40,6 @@ class April:
 		closest3DId_C = -1
 		closest3DId_D = -1
 		closest3DId_E = -1
-	
-		#print("images length: ", len(images))
 		distA = 10000000
 		distB = 10000000
 		distC = 10000000
@@ -79,10 +73,7 @@ class April:
 				print("NO corners for image ", images[i+1].name, " were detected")
 			if(flag):
 				ind = 0
-				#print("imageInteresting.xys: ", imageInteresting.xys)
 				for point in imageInteresting.xys:
-					#print("point:" , point)
-					#print("dist: ", math.dist(point, A) )
 					if(math.dist(point, A) < distA and imageInteresting.point3D_ids[ind] != -1):
 						distA = math.dist(point, A)
 						closest3DId_A = imageInteresting.point3D_ids[ind]
@@ -108,13 +99,11 @@ class April:
 			print(b)
 			print(c)
 			print(d)
-			#print("distA: ", distA, "distB: ", distB, "distC: ", distC, "distD: ", distD)
 		else:
 			self.file1.write(a+ "\n")
 			self.file1.write(b+ "\n")
 			self.file1.write(c+ "\n")
 			self.file1.write(d+ "\n")
-		#print("id: ",closest3DId_A," ", closest3DId_B, " ", closest3DId_C, " ", closest3DId_D)	
 		Aid3 = closest3DId_A
 		Bid3 = closest3DId_B
 		Cid3 = closest3DId_C
@@ -128,19 +117,13 @@ class April:
 		self.c = self.points3d[Cid3].xyz
 		self.d = self.points3d[Did3].xyz
 		self.e = self.points3d[Eid3].xyz
-		
-		#print("point3d for A: ", self.a)
-		#print("point3d for B: ", self.b)
-		#print("point3d for C: ", self.c) 
-		#print("point3d for D: ", self.d)
-		#print("point3d for E: ", self.e)
+
 
 		
   	
 	def findNormal(self, normalMethod):
 		if(normalMethod == "APRIL"):
 			print(self.a)
-			#print("shape: ", self.a.shape)
 			return np.cross(self.a - self.b, self.a - self.c)
 		elif(normalMethod == "RANSAC"):
 			aa, bb, dd = ran.findPlane(self.pcd)
@@ -200,10 +183,6 @@ class April:
 		diag2 = math.dist(self.b, self.e)
 		diag3 = math.dist(self.c, self.e)
 		diag4 = math.dist(self.d, self.e)
-		#print("diag1: ", diag1)
-		#print("diag2: ", diag2)
-		#print("diag3: ", diag3)
-		#print("diag4: ", diag4)
 		
 		av = (sideDist1 + sideDist2 + sideDist3 + sideDist4) / 4
 		scale =  squareSideLength / av
@@ -215,14 +194,11 @@ class April:
 		return scale
 		
 	def showCorners(self):
-		#print("scale: ", scale)
-		
 		fig = plt.figure()
 		fig.suptitle('3D reconstructed', fontsize=16)
 		ax = fig.gca(projection='3d')
 
 		s=0
-		#print("length of points3d",len(points3d))
 		xs = []
 		ys = []
 		zs = []
