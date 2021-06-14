@@ -1,6 +1,6 @@
 # 3D-plant-estimation
 
-Smart farming technologies can revolutionize food pro-duction and help the farming industry answer the world’s growing demand for food in a sustainable way. 3D vision methods are a promising tool which can be used for smartfarming applications. In this project, an end-to-end pipelinewas developed, which uses 3D reconstruction and machinelearning methods to extract three crop traits from a plants:the plant height, leaf area and leaf angle distribution. Theresulting method is able to estimate height within an errorof1cmfor the datasets used.
+Smart farming technologies can revolutionize food production and help the farming industry answer the world’s growing demand for food in a sustainable way. 3D-vision methods are a promising tool which can be used for smartfarming applications. In this project, an end-to-end pipeline was developed, which uses 3D reconstruction and machine learning methods to extract three crop traits from a plants:the plant height, leaf area and leaf angle distribution. The resulting method is able to estimate height within an error of 1 cm for the datasets used.
 
 ## Prerequisites
 
