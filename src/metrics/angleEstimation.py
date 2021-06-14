@@ -20,7 +20,6 @@ def findAngle(leafPath, normal):
         #A.B = |A|x|B|x cos(X)
         vecNor = tri_normals[i]
         cosAng = np.dot(vecNor, normal)/math.sqrt((np.dot(vecNor, vecNor) * np.dot(normal, normal)))
-        #print("cos angle: ", cosAng)
         i += 1
         ang = math.degrees(math.acos(cosAng))
         if(ang > 90):
