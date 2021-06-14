@@ -8,7 +8,8 @@ Smart farming technologies can revolutionize food pro-duction and help the farmi
 
 ##### Git
 For the following installation instructions you will need git which you can set up with the following commands:
-    ```bash
+
+    ```
     sudo apt-get install git
     git config --global user.name "Your Name Here"
     git config --global user.email "Same Email as used for github"
