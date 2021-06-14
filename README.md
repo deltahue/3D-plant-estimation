@@ -4,7 +4,7 @@ Smart farming technologies can revolutionize food pro-duction and help the farmi
 
 ## Prerequisites
 
-    This project has been tested on Ubuntu 18.04 and Python 3.x.
+    This project has been tested on Ubuntu 18.04 and Python 3.8.
 
 ##### Git
 For the following installation instructions you will need git which you can set up with the following commands:
