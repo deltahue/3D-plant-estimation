@@ -66,21 +66,24 @@ example:
     ./3d_reconstruction.sh test
     ```
 You can find precomputed data here:
-https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
+https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG 
 
-the show option determines whether the results are written to the terminal or written to the results folder
+The show option determines whether the results are written to the terminal or written to the results folder.
+To run the main script `3d_plant_estimation.py` go to the `src` folder and run the Python script.
 
-python3 ./3d_plant_estimation.py -plantName luca2 -show True
+`python3 ./3d_plant_estimation.py -plantName luca2 -show True`
 
-python3 ./3d_plant_estimation.py -plantName palm
+`python3 ./3d_plant_estimation.py -plantName luca2 -show False`
 
-python3 ./3d_plant_estimation.py -plantName field
+`python3 ./3d_plant_estimation.py -plantName palm`
 
-python3 ./3d_plant_estimation.py -plantName avo_6
+`python3 ./3d_plant_estimation.py -plantName field`
+
+`python3 ./3d_plant_estimation.py -plantName avo_6`
 
 
 
-    python3 ./3d_plant_estimation.py -plantName luca2 -show False
+    
 
 ## Config Files
 The config files have multiple parameters which can be set:
