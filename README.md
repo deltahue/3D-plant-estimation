@@ -9,12 +9,10 @@ Smart farming technologies can revolutionize food pro-duction and help the farmi
 ##### Git
 For the following installation instructions you will need git which you can set up with the following commands:
 
-    ```
     sudo apt-get install git
     git config --global user.name "Your Name Here"
     git config --global user.email "Same Email as used for github"
     git config --global color.ui true
-    ```
     
 ##### Anaconda
 For the following project you will need Anaconda which can be installed following [this tutorial](https://docs.anaconda.com/anaconda/install/linux/).
@@ -36,7 +34,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     cd src/colmap
     git submodule init
     git submodule update
-    cd ..
+    cd ../..
     ```
 
 3. Create a anaconda environemnt
@@ -46,26 +44,26 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     ```
 
 4. Import data into data folder. Use the structure:
-```nohighlight
-├── README.md        <- The top-level README for developers using this project.
-├── data             <- Data directory
-│   └── images       <- Directory with all image (na naming convention is required)
-│       ├── img_1 
-:       ├── img_2 
-:       :   
-:       └── img_2 
-```
+    ```nohighlight
+    ├── README.md        <- The top-level README for developers using this project.
+    ├── data             <- Data directory
+    │   └── images       <- Directory with all image (na naming convention is required)
+    │       ├── img_1 
+    :       ├── img_2 
+    :       :   
+    :       └── img_2 
+    ```
 
 
 5. Run colmap:
     ```bash
-        cd src
-        ./3d_reconstruction.sh DATA_NAME
+    cd src
+    ./3d_reconstruction.sh DATA_NAME
     ```
 example:
     ```bash
-        cd src
-        ./3d_reconstruction.sh test
+    cd src
+    ./3d_reconstruction.sh test
     ```
 You can find precomputed data here:
 https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG
