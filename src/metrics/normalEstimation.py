@@ -112,8 +112,8 @@ def findNormalPCA(croppedMesh):
     print(mean)
     print(P-mean)
     cov = np.matmul(np.transpose(P-mean), (P-mean))
-	w, v = LA.eig(np.array(cov))
-	return v
+    w, v = LA.eig(np.array(cov))
+    return v
 
 
 def getHeight(croppedMesh, normal, pointOnFloor):
