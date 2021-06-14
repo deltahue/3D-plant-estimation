@@ -60,7 +60,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     cd src
     ./3d_reconstruction.sh DATA_NAME
     ```
-example:
+##### Example:
     ```bash
     cd src
     ./3d_reconstruction.sh test
