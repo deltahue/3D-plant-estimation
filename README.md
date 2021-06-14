@@ -83,6 +83,17 @@ python3 ./3d_plant_estimation.py -plantName avo_6
 
     python3 ./3d_plant_estimation.py -plantName luca2 -show False
 
-## TODO:
-Licenses?
-Contribute?
+## Config Files
+The config files have multiple parameters which can be set:
+```
+pathRoot --> path of the data folder
+pathRoot2 --> path of the data folder (without the /)
+pathOrgans --> path for the results of the organ segmentation data folder
+pathOrganClass --> path for the training data for the organ classifier
+croppedPcdFilteredName --> path for the cropped pcd
+hdbscanPath --> path for the hdbscan config
+colmapFolderName --> path for the colmap python scripts
+apriltagSide --> size of the april tag (in cm)
+nb_points --> number of points for filtering
+radius --> radius parameter for filtering
+```
