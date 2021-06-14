@@ -40,7 +40,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
 
 3. Create a anaconda environemnt
     ```bash
-        conda env create -f finalEnv.yml -n ENVNAME
+        conda env create -f environment.yml -n ENVNAME
         conda activate ENVNAME
     ```
 
