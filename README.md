@@ -41,8 +41,8 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
 
 3. Create a anaconda environemnt
     ```bash
-        conda env create -f environment.yml -n ENVNAME
-        conda activate ENVNAME
+    conda env create -f environment.yml -n ENVNAME
+    conda activate ENVNAME
     ```
 
 4. Import data into data folder. Use the structure:
