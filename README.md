@@ -54,6 +54,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     ```
 
 You can find the raw data on which you can apply colmap here: https://polybox.ethz.ch/index.php/s/YbVrxLDRIYIOT1R
+
 5. Run colmap:
     ```bash
     cd src
