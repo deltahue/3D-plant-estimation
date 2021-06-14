@@ -15,7 +15,7 @@ def read_config(config_file):
         with open(config_file, "r") as f:
             config = yaml.load(f, Loader=yaml.FullLoader)
     except FileNotFoundError:
-        print("The config file ({config_file}) you specified does not exist.")
+        print(f"The config file ({config_file}) you specified does not exist.")
     return config
 
 
