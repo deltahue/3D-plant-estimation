@@ -1,4 +1,9 @@
-
+'''
+3d_plant_estimation.py
+Authors: Soley Hafthorsdottir, Gian Erni, Elham Amin Mansour, David Helm
+Date: 14.06.2021
+Main file for the 3D vision course 2021. Pleas consult the readme to learn how to use this file
+'''
 import open3d as o3d
 import numpy as np
 import os
@@ -41,15 +46,12 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__== "__main__":
-
+    # get all input arguments
     args = sys.argv[1:]
-    
-
     parser = argparse.ArgumentParser(description='name of plant')
     parser.add_argument('-plantName', metavar='name', type=str, help='the name of the plant')
     parser.add_argument('-show', metavar='show', type=str2bool, default=False, help='show the results in the terminal')
     args = parser.parse_args()
-
 
     if(args.plantName == "luca2"):
         from config_luca2 import *
@@ -63,7 +65,6 @@ if __name__== "__main__":
     elif(args.plantName == "field"):
         from config_field import *
         plantName = "field"
-    
         
     # Crop the point cloud and export results
     cropped_pcd = o3d.io.read_point_cloud(pathRoot + croppedMeshName)
@@ -71,31 +72,28 @@ if __name__== "__main__":
     if visualize == True:
         visualize_cloud(cropped_pcd)
     
-    #Downsample and remove outliers from cropped point cloud
+    # Downsample and remove outliers from cropped point cloud
     print("Downsample the point cloud with a voxel of 0.02")
     voxel_down_cropped_pcd = cropped_pcd.voxel_down_sample(voxel_size=0.02)
     if visualize == True:
         o3d.visualization.draw_geometries([voxel_down_cropped_pcd])
-    
-   
+
+    # Filtering
     print("Radius oulier removal")
     rad_cl, ind = voxel_down_cropped_pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
 
-      
     print("Number of outliers is: " + str(len(np.asarray(voxel_down_cropped_pcd.points)) - len(np.asarray(rad_cl.points))) + '/' + str(len(np.asarray(voxel_down_cropped_pcd.points))))
     if visualize == True:
         display_inlier_outlier(voxel_down_cropped_pcd, ind)
         o3d.visualization.draw_geometries([rad_cl])
 
-     
     if save_results == True:
         save_point_cloud(pathRoot + croppedPcdFilteredName, rad_cl)
         
     # read files
     config = read_config(hdbscanPath)
     config['hdbscan']['min_cluster_size'] = min_cluster_size
-    #print("config: ", config)
-    path = pathRoot + croppedPcdFilteredName #config['path']
+    path = pathRoot + croppedPcdFilteredName
     pc = o3d.io.read_point_cloud(path)
 
     if config['show_raw']:
@@ -107,9 +105,7 @@ if __name__== "__main__":
     if visualize == True:
         show_clustering_result(pc, labels)
 
-
-    clusters = extract_clusters(pc, labels, config)
-    # Array of clusters indexed by labels
+    clusters = extract_clusters(pc, labels, config) # Array of clusters indexed by labels
 
     if not os.path.exists(pathOrgans):
         os.makedirs(pathOrgans)
@@ -120,7 +116,6 @@ if __name__== "__main__":
         os.remove(pathOrgans+ plantName + "/" + filename)
     
     # Generate and visualize mesh for each cluster
-    #
     for lab in range(len(clusters)-1):
         if visualize == True:
             o3d.visualization.draw_geometries([clusters[lab]])
@@ -131,8 +126,7 @@ if __name__== "__main__":
         vertices = np.asarray(mesh.vertices)
         
         mesh = remove_islands(mesh, visualize = visualize)
-        smooth = smooth_mesh(mesh, 10, visualize = visualize) 
-        #smoother = remove_islands(smooth, visualize = visualize)
+        smooth = smooth_mesh(mesh, 10, visualize = visualize)
         
         #removing the old meshes
         final_mesh = remove_infs_nans(smooth)
@@ -142,7 +136,6 @@ if __name__== "__main__":
         if save_results == True:
             save_mesh(pathOrgans+ plantName + "/mesh_label"+str(lab)+'.ply' , smooth)
 
-    metrics = True
     if metrics:
         if not os.path.exists(pathRoot + "results"):
             os.makedirs(pathRoot + "results")
@@ -258,22 +251,3 @@ if __name__== "__main__":
                 plt.show()
             else:
                 plt.savefig(pathRoot + "results/" +"histo_" +filename +'.png')
-
-
- 
-
-
-	    
-
-
-
-
-
-    
-
-    
-    
-    
-    
-    
-    

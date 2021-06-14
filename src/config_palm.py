@@ -10,4 +10,4 @@ apriltagSide = 17.3
 nb_points=30
 radius=0.1
 min_cluster_size= 200
-
+metrics = True
