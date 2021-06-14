@@ -61,10 +61,9 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     ./3d_reconstruction.sh DATA_NAME
     ```
 ##### Example:
-    ```bash
     cd src
     ./3d_reconstruction.sh test
-    ```
+    
 You can find precomputed data here:
 https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG 
 
