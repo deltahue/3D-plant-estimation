@@ -32,7 +32,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
 
 2. Install Colmap
     ```bash
-    cd colmap
+    cd src/colmap
     git submodule init
     git submodule update
     cd ..
