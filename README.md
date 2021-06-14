@@ -36,7 +36,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     cd ../..
     ```
 
-3. Create a anaconda environemnt
+3. Create a anaconda environment
     ```bash
     conda env create -f environment.yml -n ENVNAME
     conda activate ENVNAME
@@ -65,6 +65,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     
 You can find precomputed data here:
 https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG 
+Put the data into the `data` folder.
 
 The show option determines whether the results are written to the terminal or written to the results folder.
 To run the main script `3d_plant_estimation.py` go to the `src` folder and run the Python script.
