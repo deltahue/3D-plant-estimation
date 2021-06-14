@@ -8,3 +8,4 @@ colmapFolderName = ""
 apriltagSide = 17.3
 nb_points=20
 radius=0.1
+min_cluster_size= 150
