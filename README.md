@@ -63,8 +63,8 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     cd src
     ./3d_reconstruction.sh test
     
-You can find precomputed data here:
-https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG 
+You can find precomputed data 
+[here](https://polybox.ethz.ch/index.php/s/wEiLS1izwR2D8DG).
 Put the data into the `data` folder.
 
 The show option determines whether the results are written to the terminal or written to the results folder.
