@@ -5,7 +5,7 @@ import trimesh.graph as trimesh
 
 def findAreaOfTop(meshPath):
 	mesh = o3d.io.read_triangle_mesh(meshPath)
-	sumNew = mesh.get_surface_area()
+	#sumNew = mesh.get_surface_area()
 	tris = np.asarray(mesh.triangles)
 	vers = np.asarray(mesh.vertices)
 	mesh.compute_vertex_normals(normalized=True)
