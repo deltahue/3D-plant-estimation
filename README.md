@@ -84,7 +84,7 @@ python3 ./3d_plant_estimation.py -plantName avo_6
     python3 ./3d_plant_estimation.py -plantName luca2 -show False
 
 ## Config Files
-the config files have multiple parameters which can be set:
+The config files have multiple parameters which can be set:
 ```
 pathRoot --> path of the data folder
 pathRoot2 --> path of the data folder (without the /)
