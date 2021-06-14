@@ -49,7 +49,7 @@ def smooth_mesh(mesh, num_iter = 10, visualize = False):
 
 def remove_islands(mesh, visualize = True):
     '''
-    Remove only the largest part of the mesh 
+    Remove everything except the largest part of the mesh 
     (removes small islands caused by remaining noise)
     '''
     with o3d.utility.VerbosityContextManager(
