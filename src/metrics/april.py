@@ -1,5 +1,4 @@
 import colmap.scripts.python.read_write_model as col
-#from metrics.aprilDetector import findPointsOtherLib
 import cv2 as cv2
 from matplotlib import pyplot as plt
 import math
@@ -9,11 +8,6 @@ import numpy as np
 import metrics.ransac as ran
 import os
 
-
-#a = (0,0,0)
-#b = (0,0,0)
-#c = (0,0,0)
-#d = (0,0,0)
 
 class April:
 	def __init__(self, filePath, _plantName, _pcd, _show, _file1):
@@ -119,8 +113,6 @@ class April:
 		self.e = self.points3d[Eid3].xyz
 
 
-		
-  	
 	def findNormal(self, normalMethod):
 		if(normalMethod == "APRIL"):
 			print(self.a)
@@ -186,13 +178,13 @@ class April:
 		
 		av = (sideDist1 + sideDist2 + sideDist3 + sideDist4) / 4
 		scale =  squareSideLength / av
-		#print("side: ",  ((diag1 + diag2 + diag3 + diag4) / 4)  * scale) 
 
 		self.x = np.array(self.a - self.b)
 		self.y = np.array(self.a - self.d)	
 		self.z = np.cross(self.a - self.b, self.a - self.c)
 		return scale
-		
+
+
 	def showCorners(self):
 		fig = plt.figure()
 		fig.suptitle('3D reconstructed', fontsize=16)
@@ -215,10 +207,3 @@ class April:
 		ax.plot(self.d[0], self.d[1], self.d[2], 'r.')
 		
 		plt.show()
-	
-	
-	
-
-		
-
-	
