@@ -28,7 +28,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     cd 3D-plant-estimation
     ```
 
-2. Install Colmap
+2. Clone the Colmap source code
     ```bash
     cd src/colmap
     git submodule init
@@ -36,7 +36,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     cd ../..
     ```
 
-3. Create a anaconda environment
+3. Create an anaconda environment
     ```bash
     conda env create -f environment.yml -n ENVNAME
     conda activate ENVNAME
@@ -46,7 +46,7 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     ```nohighlight
     ├── README.md        <- The top-level README for developers using this project.
     ├── data             <- Data directory
-    │   └── images       <- Directory with all image (na naming convention is required)
+    │   └── images       <- Directory with all image (no naming convention is required)
     │       ├── img_1 
     :       ├── img_2 
     :       :   
