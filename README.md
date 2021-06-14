@@ -88,7 +88,7 @@ the config files have multiple parameters which can be set:
 ```
 pathRoot --> path of the data folder
 pathRoot2 --> path of the data folder (without the /)
-pathOrgans= --> path for the results of the organ segmentation data folder
+pathOrgans --> path for the results of the organ segmentation data folder
 pathOrganClass --> path for the training data for the organ classifier
 croppedPcdFilteredName --> path for the cropped pcd
 hdbscanPath --> path for the hdbscan config
