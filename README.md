@@ -96,4 +96,4 @@ colmapFolderName --> path for the colmap python scripts
 apriltagSide --> size of the april tag (in cm)
 nb_points --> number of points for filtering
 radius --> radius parameter for filtering
-``
+```
