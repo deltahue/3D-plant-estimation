@@ -29,4 +29,4 @@ def findAreaOfTop(meshPath):
 		adjs[pair[0]].append(pair[1])
 		adjs[pair[1]].append(pair[0])
 	
-	return sumNew
+	return summ
