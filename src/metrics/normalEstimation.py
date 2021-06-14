@@ -101,22 +101,20 @@ def get_arrow(origin=[0, 0, 0], end=None, vec=None):
     mesh.rotate(-1 *Rz, center=np.array([0, 0, 0]))
     mesh.translate(origin)
     return(mesh)
-    
- 
-
 
 
 def findNormalPCA(croppedMesh):
-	mesh = o3d.io.read_triangle_mesh(croppedMesh)
-	tris = np.asarray(mesh.triangles)
-	P = np.asarray(mesh.vertices)
-	print(P)
-	mean = P.mean(axis=0)
-	print(mean)
-	print(P-mean)
-	cov = np.matmul(np.transpose(P-mean), (P-mean))
+    mesh = o3d.io.read_triangle_mesh(croppedMesh)
+    tris = np.asarray(mesh.triangles)
+    P = np.asarray(mesh.vertices)
+    print(P)
+    mean = P.mean(axis=0)
+    print(mean)
+    print(P-mean)
+    cov = np.matmul(np.transpose(P-mean), (P-mean))
 	w, v = LA.eig(np.array(cov))
 	return v
+
 
 def getHeight(croppedMesh, normal, pointOnFloor):
     mesh = o3d.io.read_triangle_mesh(croppedMesh)
@@ -132,31 +130,8 @@ def getHeight(croppedMesh, normal, pointOnFloor):
     maxHeight /= math.sqrt(np.dot(normal, normal))
     return maxHeight
 
+
 def drawNormal(meshPath, normal,origin):
     norVec = get_arrow(origin=origin, vec=-1*normal)
     mesh = o3d.io.read_triangle_mesh(meshPath)
     o3d.visualization.draw_geometries([norVec, mesh])
-
-    
-"""    
-if __name__=="__main__":
-	mesh = o3d.io.read_triangle_mesh("./cropped_mesh_colmap(plant).ply")
-	v = findNormalPCA()
-	
-	# Create a Cartesian Frame of Reference
-	FOR = get_o3d_FOR()
-
-	arrow1 = get_arrow(origin=[0,0,0], vec=v[0]*10)
-	arrow2 = get_arrow(origin=[0,0,0], vec=v[1]*10)
-	arrow3 = get_arrow(origin=[0,0,0], vec=v[2]*10)
-	
-	# Draw everything
-	o3d.visualization.draw_geometries([arrow1, arrow2, arrow3, mesh])
-	
-	april = ap.April()
-	normal = april.findNormal()
-	norVec = get_arrow(origin=[0,0,0], vec=normal*10)
-	mesh = o3d.io.read_triangle_mesh("./bigPlantDataSetWithAprilTag_lowres/dense/0/meshed-poisson.ply")
-	o3d.visualization.draw_geometries([norVec,mesh])
-	
-"""
