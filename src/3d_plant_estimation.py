@@ -94,7 +94,6 @@ if __name__== "__main__":
     # read files
     # TODO IO function with try statement
     config = read_config(hdbscanPath)
-    print("min_cluster_size: ",  min_cluster_size)
     config['hdbscan']['min_cluster_size'] = min_cluster_size
     #print("config: ", config)
     path = pathRoot + croppedPcdFilteredName #config['path']
