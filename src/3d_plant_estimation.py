@@ -92,7 +92,6 @@ if __name__== "__main__":
         save_point_cloud(pathRoot + croppedPcdFilteredName, rad_cl)
         
     # read files
-    # TODO IO function with try statement
     config = read_config(hdbscanPath)
     config['hdbscan']['min_cluster_size'] = min_cluster_size
     #print("config: ", config)
