@@ -33,7 +33,6 @@ def create_voxel_grid(pointcloud, div):
 
 # visualization
 def show_clustering_result(pointcloud, labels):
-    # TODO assert length
     n = len(np.unique(labels))-1
     colors = plt.get_cmap("tab20")(labels / (n if n > 0 else 1))
     # make noise grey
@@ -56,14 +55,13 @@ def do_HDBSCAN(arr, config):
                                 min_samples=config['min_samples'])
     print("do hbscan")
     clusterer.fit(arr)
-    print("agter fit")
     return clusterer
 
 # main wrapper
 def cluster_pc_HDBSCAN(pointcloud, config):
     print("start cluster")
     np_6D = get_XYZHSV_np(pointcloud)
-    print("mid clustere")
+    print("mid clusterer")
     hdbscan = do_HDBSCAN(np_6D, config['hdbscan'])
 
     labels = hdbscan.labels_
@@ -72,7 +70,6 @@ def cluster_pc_HDBSCAN(pointcloud, config):
     if config['hdbscan']['hdbscan_debug']:
         hdbscan.condensed_tree_.plot(select_clusters=True)
         plt.show()
-    # TODO debug plotting
     return labels
 
 
