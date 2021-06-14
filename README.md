@@ -26,7 +26,6 @@ For the following project you will need [COLMAP](https://colmap.github.io/index.
     ```bash
     git clone git@github.com:deltahue/3D-plant-estimation.git
     cd 3D-plant-estimation
-    git checkout development
     ```
 
 2. Install Colmap
