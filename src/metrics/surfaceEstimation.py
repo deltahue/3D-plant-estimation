@@ -30,13 +30,3 @@ def findAreaOfTop(meshPath):
 		adjs[pair[1]].append(pair[0])
 	
 	return sumNew
-
-
-
-"""
-if __name__ == "__main__":
-	findAreaOfTop((1,0,0)) 	
-"""	
-
-
-
