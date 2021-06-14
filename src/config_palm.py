@@ -1,5 +1,4 @@
 pathRoot = "../data/palm02/"
-pathRoot2 = "../data/palm02"
 pathOrgans= "../data/organs/"
 pathOrganClass= "../organTraining/"
 croppedPcdFilteredName = 'dense/cropped_palm.ply'

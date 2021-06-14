@@ -151,7 +151,7 @@ if __name__== "__main__":
         ##############################################
         ################## SCALE #####################
         ##############################################
-        colmapOutputPath = pathRoot2 + colmapFolderName
+        colmapOutputPath = pathRoot[:-1] + colmapFolderName
         pcdFull = o3d.io.read_point_cloud(pathRoot + MeshOrigName)
         april = ap.April(colmapOutputPath, plantName, pcdFull, args.show, file1)
         scale = april.findScale(apriltagSide)
